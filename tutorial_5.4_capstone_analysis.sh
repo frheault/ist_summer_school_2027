@@ -41,8 +41,9 @@ tck2connectome wb_250k.tck synthseg_relabeled_nodes.nii.gz connectome_sift2.csv 
 echo "Step 4: Running NetworkX graph analysis on structural connectome..."
 python3 tutorial_5.2_connectomics.py
 
-# Step 5: Run QuickBundles Clustering
-echo "Step 5: Running QuickBundles streamline clustering..."
-bash tutorial_5.1_clustering.sh
-
+echo ""
+echo "Tutorial 5.4 complete."
+echo "To visualize the SIFT2-weighted connectome in 3D (MRView):"
+echo "  mrview fa.nii.gz -connectome.init synthseg_relabeled_nodes.nii.gz -connectome.load connectome_sift2.csv"
 echo "Tutorial 5.4 Capstone complete."
+
