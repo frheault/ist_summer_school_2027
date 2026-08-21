@@ -1,13 +1,7 @@
 # IST Summer School 2027: Diffusion MRI Workshop
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Docker Image](https://img.shields.io/badge/docker-ist__ws__2027-blue.svg)](Dockerfile)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](requirements.txt)
-[![MRtrix3](https://img.shields.io/badge/MRtrix3-3.0.4-orange.svg)](https://www.mrtrix.org/)
-[![FreeSurfer](https://img.shields.io/badge/FreeSurfer-SynthSeg--8.0-green.svg)](https://surfer.nmr.mgh.harvard.edu/)
-[![Scilpy](https://img.shields.io/badge/Scilpy-2.0.0-blueviolet.svg)](https://github.com/scilus/scilpy)
+Welcome to the **IST Summer School 2027 Diffusion MRI Workshop** repository. This repository contains the hands-on tutorial scripts, sample data, and companion study guide for the 5-day workshop covering diffusion MRI from physics and data quality control to microstructure, tractography, tractometry, and structural connectomics.
 
-Welcome to the **IST Summer School 2027 Diffusion MRI Workshop** repository! This repository contains the complete 5-day hands-on curriculum, tutorial scripts, interactive Jupyter notebooks, validation datasets, and containerized software environment for mastering diffusion MRI (dMRI) from raw physics to microstructural modeling, tractography, tractometry, and structural connectomics.
 
 ---
 
@@ -33,13 +27,14 @@ Welcome to the **IST Summer School 2027 Diffusion MRI Workshop** repository! Thi
 
 ## Workshop Overview
 
-The **IST Summer School 2027 Diffusion MRI Workshop** is an intensive, 5-day graduate-level masterclass designed for neuroimaging researchers, PhD students, postdocs, and clinicians. The curriculum guides participants through the full computational life cycle of diffusion MRI:
+The workshop covers practical diffusion MRI processing and analysis across five days:
 
-1. **Foundations & Image Registration**: Understanding dMRI physics, BIDS data organization, rigid/affine multimodal registration (ANTs), and AI-based anatomical parcellation (FreeSurfer SynthSeg).
-2. **Quality Assurance & DTI Tractography**: Artifact identification, tensor fitting (MRtrix3/Scilpy/FSL), scalar metrics ($FA, MD, RD, AD$), directional DEC-FA maps, and deterministic streamline tracking of the Corpus Callosum.
-3. **Advanced Microstructure & Spherical Deconvolution**: Multi-compartment biophysical modeling (AMICO NODDI, DIPY DKI), Fixel-Based Analysis (MRtrix3 FBA / `fod2fixel`), Multi-Shell Multi-Tissue Constrained Spherical Deconvolution (MSMT-CSD), and probabilistic tractography (`iFOD2`).
-4. **Pipelines, Bundle Segmentation & Tractometry**: High-throughput automated pipelines (TractoFlow/QSIPrep), manual virtual ROI dissection, automated atlas-based bundle recognition (Scilpy `BundleSeg`), and along-tract profilometry (100-node sampling, JSON/CSV export).
-5. **Clustering, Connectomics & Capstone Project**: Unsupervised streamline clustering (QuickBundles), SIFT2 streamline filtering, structural connectome matrix generation, NetworkX graph theory analysis, and open capstone research sprints.
+1. **Day 1 — Foundations & Registration**: dMRI physics, BIDS structure, rigid/affine multimodal registration (ANTs/FLIRT), and automated anatomical parcellation (SynthSeg).
+2. **Day 2 — QA & DTI Tractography**: Raw data inspection, tensor fitting, scalar maps ($FA, MD, RD, AD$), DEC-FA maps, and deterministic tracking of the Corpus Callosum.
+3. **Day 3 — Microstructure & CSD**: Multi-compartment models (NODDI, DKI), Fixel-Based Analysis (FBA / `fod2fixel`), MSMT-CSD, and probabilistic tractography (`iFOD2`).
+4. **Day 4 — Pipelines & Tractometry**: Automated preprocessing pipelines (TractoFlow/QSIPrep), bundle dissection, and along-tract microstructural profiling with Scilpy.
+5. **Day 5 — Clustering & Connectomics**: QuickBundles streamline clustering, SIFT2 filtering, structural connectomes, and graph theory analysis with NetworkX.
+
 
 ---
 
