@@ -41,6 +41,7 @@ flirt -in template/mni_masked.nii.gz -ref b0_brain.nii.gz -omat from_mni_fsl_mat
 tckedit wb_250k.tck CST_L.tck -include cc_roi.nii.gz -minlength 30 -force
 
 # Automated BundleSeg Atlas (Optional / Reference)
-# scil_tractogram_segment_with_bundleseg wb_250k.trk config.json atlas/ from_mni_fsl_ras_fix.txt --out_dir bundleseg_automated/ --modify_distance_thr 1 --reference b0_brain.nii.gz -f
+# scil_tractogram_segment_with_bundleseg wb_250k.trk zenodo_scil_atlas/config_fss_1.json zenodo_scil_atlas/atlas/ from_mni_fsl_ras_fix.txt --out_dir bundleseg_automated/ --modify_distance_thr 1 --reference b0_brain.nii.gz -f
+
 
 echo "Tutorial 4.3 complete. Generated wb_250k.tck, CC_bundle.tck, and CST_L.tck."
