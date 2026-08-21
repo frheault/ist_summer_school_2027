@@ -13,12 +13,15 @@ find . -maxdepth 1 \
     -not -name "requirements.txt" \
     -not -name "launch_jupyter.sh" \
     -not -name "NOTEBOOK.md" \
-    -not -name "NEW_CURRICULUM.md" \
+    -not -name "*CURRICULUM*" \
+    -not -name "*curriculum*" \
     -not -name "README.md" \
     -not -name "clean_repo.sh" \
     -not -name "check_installation.sh" \
+    -not -name "check_setup.sh" \
     -not -name ".git" \
     -not -name ".gitignore" \
+
     -not -name "." \
     -exec rm -rf {} +
 
