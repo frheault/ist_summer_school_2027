@@ -1,99 +1,68 @@
 #!/bin/bash
-
-# This script checks for the required software for the dMRI Winter School tutorials.
-
+# IST Diffusion MRI Summer School 2027 - Installation Check
 LOG_FILE="installation_check.log"
-
-# Clear the log file
 > "$LOG_FILE"
+ERRORS=0
 
 echo "=================================================" | tee -a "$LOG_FILE"
-echo " dMRI Winter School - Installation Check (v4)"    | tee -a "$LOG_FILE"
+echo " dMRI Summer School 2027 - Installation Check"     | tee -a "$LOG_FILE"
 echo "=================================================" | tee -a "$LOG_FILE"
-echo "Detailed log will be saved to: $LOG_FILE"
 
-# Source FreeSurfer if FREESURFER_HOME is set
-if [ -n "$FREESURFER_HOME" ]; then
-    echo "Sourcing FreeSurfer environment from $FREESURFER_HOME/SetUpFreeSurfer.sh" | tee -a "$LOG_FILE"
-    . "$FREESURFER_HOME/SetUpFreeSurfer.sh"
-else
-    echo "FREESURFER_HOME not set, skipping FreeSurfer environment setup." | tee -a "$LOG_FILE"
-fi
+# Environment auto-detection and setup
+[ -z "$FREESURFER_HOME" ] && for d in /usr/local/freesurfer/8.2.0 /usr/local/freesurfer/8.0.0 /usr/local/freesurfer/7.4.1 /opt/freesurfer; do [ -d "$d" ] && export FREESURFER_HOME="$d" && break; done
+[ -n "$FREESURFER_HOME" ] && [ -f "$FREESURFER_HOME/SetUpFreeSurfer.sh" ] && . "$FREESURFER_HOME/SetUpFreeSurfer.sh" > /dev/null 2>&1
+[ -z "$FSLDIR" ] && for d in /home/local/USHERBROOKE/rhef1902/Libraries/fsl /usr/local/fsl /usr/share/fsl; do [ -d "$d" ] && export FSLDIR="$d" && break; done
+[ -n "$FSLDIR" ] && [ -f "$FSLDIR/etc/fslconf/fsl.sh" ] && . "$FSLDIR/etc/fslconf/fsl.sh" > /dev/null 2>&1
+[ -z "$ANTSPATH" ] && for d in /home/local/USHERBROOKE/rhef1902/Libraries/ANTs/ants-2.6.5/bin /usr/local/ants/bin /usr/lib/ants; do [ -d "$d" ] && export ANTSPATH="$d" && export PATH="$ANTSPATH:$PATH" && break; done
 
-# --- Helper Function ---
-check_command() {
-    local cmd_name=$1
-    local version_arg=$2
-    local tool_name=$3
-    local env_var=$4
-
-    if [ -n "$env_var" ]; then
-        printf "Checking for %-40s ... " "$env_var variable"
-        echo -n "Checking for $env_var variable ... " >> "$LOG_FILE"
-        if [ -z "${!env_var}" ]; then
-            printf "Not Set\n"
-            echo "Not Set" >> "$LOG_FILE"
-            return
-        else
-            printf "Set\n"
-            echo "Set to ${!env_var}" >> "$LOG_FILE"
-        fi
-    fi
-
-    printf "Checking for %-40s ... " "$tool_name command"
-    echo -n "Checking for $tool_name command ... " >> "$LOG_FILE"
-    if command -v "$cmd_name" &> /dev/null; then
-        printf "Installed\n"
-        echo -n "Installed" >> "$LOG_FILE"
-        if [ -n "$version_arg" ]; then
-            local version_info
-            version_info=$("$cmd_name" "$version_arg" 2>&1)
-            local first_line
-            first_line=$(echo "$version_info" | head -n 1)
-            echo " (version: $first_line)" >> "$LOG_FILE"
-        else
-            echo "" >> "$LOG_FILE"
-        fi
+check_cmd() {
+    local cmd="$1"
+    printf "Checking for %-35s ... " "${2:-$cmd}" | tee -a "$LOG_FILE"
+    if command -v "$cmd" &> /dev/null; then
+        echo "Installed ($(command -v "$cmd"))" | tee -a "$LOG_FILE"
     else
-        printf "Not Found\n"
-        echo "Not Found" >> "$LOG_FILE"
+        echo "NOT FOUND" | tee -a "$LOG_FILE"; ERRORS=$((ERRORS + 1))
     fi
 }
 
-# --- FSL ---
-echo -e "\n--- FSL ---" | tee -a "$LOG_FILE"
-check_command "bet" "" "bet" "FSLDIR"
-check_command "fslhd" "" "fslhd"
+check_py() {
+    local mod="$1"
+    printf "Checking Python module %-27s ... " "$mod" | tee -a "$LOG_FILE"
+    if python3 -c "import $mod" &> /dev/null; then
+        echo "Installed" | tee -a "$LOG_FILE"
+    else
+        echo "NOT FOUND" | tee -a "$LOG_FILE"; ERRORS=$((ERRORS + 1))
+    fi
+}
 
-# --- MRtrix3 ---
-echo -e "\n--- MRtrix3 ---" | tee -a "$LOG_FILE"
-check_command "mrinfo" "--version" "mrinfo"
-check_command "dwiextract" "--version" "dwiextract"
-check_command "tckgen" "--version" "tckgen"
+echo -e "\n--- Core Neuroimaging Tools ---" | tee -a "$LOG_FILE"
+check_cmd "bet" "FSL bet"
+check_cmd "flirt" "FSL flirt"
+check_cmd "antsRegistrationSyNQuick.sh" "ANTs registration"
+check_cmd "mri_synthseg" "FreeSurfer SynthSeg"
+check_cmd "scil_header_print_info" "Scilpy header tool"
 
-# --- ANTs ---
-echo -e "\n--- ANTs ---" | tee -a "$LOG_FILE"
-check_command "antsRegistrationSyNQuick.sh" "" "antsRegistrationSyNQuick.sh" "ANTSPATH"
-check_command "antsApplyTransforms" "" "antsApplyTransforms"
+echo -e "\n--- MRtrix3 Suite ---" | tee -a "$LOG_FILE"
+for cmd in mrinfo dwiextract dwi2tensor dwi2fod tckgen fod2fixel tcksift2 tck2connectome; do
+    check_cmd "$cmd" "MRtrix3 $cmd"
+done
 
-# --- FreeSurfer ---
-echo -e "\n--- FreeSurfer ---" | tee -a "$LOG_FILE"
-check_command "mri_convert" "--version" "mri_convert" "FREESURFER_HOME"
-check_command "recon-all" "" "recon-all"
-check_command "mri_synthseg" "" "mri_synthseg"
+echo -e "\n--- Python Modules ---" | tee -a "$LOG_FILE"
+for mod in scilpy dipy amico networkx pandas nibabel; do
+    check_py "$mod"
+done
 
-# --- SCILPY ---
-echo -e "\n--- SCILPY ---" | tee -a "$LOG_FILE"
-check_command "scil_header_print_info" "" "scil_header_print_info"
-check_command "scil_dwi_extract_b0" "" "scil_dwi_extract_b0"
-check_command "scil_volume_math" "" "scil_volume_math"
-
-# --- Other ---
-echo -e "\n--- Other ---" | tee -a "$LOG_FILE"
-check_command "unzip" "-v" "unzip"
-check_command "dcm2niix" "-v" "dcm2niix"
-check_command "curl" "--version" "curl"
+echo -e "\n--- System Utilities ---" | tee -a "$LOG_FILE"
+check_cmd "dcm2niix" "dcm2niix"
+check_cmd "unzip" "unzip"
 
 echo "=================================================" | tee -a "$LOG_FILE"
-echo " Check complete." | tee -a "$LOG_FILE"
-echo "=================================================" | tee -a "$LOG_FILE"
+if [ "$ERRORS" -eq 0 ]; then
+    echo " All mandatory tools are installed! (0 errors)" | tee -a "$LOG_FILE"
+    echo "=================================================" | tee -a "$LOG_FILE"
+    exit 0
+else
+    echo " ERROR: $ERRORS required tool(s) missing." | tee -a "$LOG_FILE"
+    echo "=================================================" | tee -a "$LOG_FILE"
+    exit 1
+fi

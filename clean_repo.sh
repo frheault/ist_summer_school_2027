@@ -1,15 +1,20 @@
 #!/bin/bash
 
-# This script cleans the repository by deleting all files and folders except for a predefined list, using the 'find' command.
+# This script cleans the repository by deleting all generated files and folders except for the workshop source files.
 
 echo "Cleaning the repository..."
 
 find . -maxdepth 1 \
     -not -name "template" \
+    -not -name "notebooks" \
     -not -name "dicom_filtered_sub01.zip" \
     -not -name "tutorial*" \
     -not -name "Dockerfile" \
+    -not -name "requirements.txt" \
+    -not -name "launch_jupyter.sh" \
     -not -name "NOTEBOOK.md" \
+    -not -name "NEW_CURRICULUM.md" \
+    -not -name "README.md" \
     -not -name "clean_repo.sh" \
     -not -name "check_installation.sh" \
     -not -name ".git" \
