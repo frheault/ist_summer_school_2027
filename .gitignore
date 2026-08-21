@@ -17,3 +17,7 @@ installation_check.log
 assignments.txt
 frf.txt
 tractometry_profiles_plot/
+venv/
+.venv/
+.pytest_cache/
+__pycache__/

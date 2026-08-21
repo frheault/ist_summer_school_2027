@@ -15,6 +15,10 @@ echo "=================================================" | tee -a "$LOG_FILE"
 [ -n "$FSLDIR" ] && [ -f "$FSLDIR/etc/fslconf/fsl.sh" ] && . "$FSLDIR/etc/fslconf/fsl.sh" > /dev/null 2>&1
 [ -z "$ANTSPATH" ] && for d in /opt/ants/bin /usr/local/ants/bin /usr/lib/ants; do [ -d "$d" ] && export ANTSPATH="$d" && export PATH="$ANTSPATH:$PATH" && break; done
 
+# Ensure virtualenv python takes precedence over FSL/FreeSurfer embedded pythons
+[ -d "/opt/venv/bin" ] && export PATH="/opt/venv/bin:$PATH"
+[ -n "$VIRTUAL_ENV" ] && export PATH="$VIRTUAL_ENV/bin:$PATH"
+
 check_cmd() {
     local cmd="$1"
     printf "Checking for %-35s ... " "${2:-$cmd}" | tee -a "$LOG_FILE"
@@ -48,7 +52,7 @@ for cmd in mrinfo dwiextract dwi2tensor dwi2fod tckgen fod2fixel tcksift2 tck2co
 done
 
 echo -e "\n--- Python Modules ---" | tee -a "$LOG_FILE"
-for mod in scilpy dipy amico networkx pandas nibabel; do
+for mod in scilpy dipy amico trx numpy scipy nibabel networkx pandas matplotlib seaborn jupyterlab h5py; do
     check_py "$mod"
 done
 

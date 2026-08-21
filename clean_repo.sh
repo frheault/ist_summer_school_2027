@@ -16,11 +16,16 @@ find . -maxdepth 1 \
     -not -name "*CURRICULUM*" \
     -not -name "*curriculum*" \
     -not -name "README.md" \
+    -not -name "*schedule*" \
+    -not -name "*.xlsx" \
     -not -name "clean_repo.sh" \
+    -not -name "run_all_tutorials.sh" \
     -not -name "check_installation.sh" \
     -not -name "check_setup.sh" \
     -not -name ".git" \
     -not -name ".gitignore" \
+    -not -name "venv" \
+    -not -name ".venv" \
     -not -name "." \
     -exec rm -rf {} +
 
