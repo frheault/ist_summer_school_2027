@@ -2,80 +2,80 @@
 # Dockerfile for IST Summer School 2027 Diffusion MRI Workshop
 # Multi-stage container definition:
 #   Stage 1: FreeSurfer (with SynthSeg AI)
-#   Stage 2: FSL
-#   Stage 3: ANTs
-#   Stage 4: MRtrix3
-#   Stage 5: Unified Runtime (Ubuntu 22.04 + Python Virtualenv + JupyterLab)
+#   Stage 2: FSL 6.0.7
+#   Stage 3: ANTs 2.5.0
+#   Stage 4: MRtrix3 3.0.8
+#   Stage 5: Unified Runtime (Ubuntu 24.04 + Native Python 3.12 + JupyterLab)
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
 # --- Stage 1: FreeSurfer ---
 # ------------------------------------------------------------------------------
-FROM ubuntu:22.04 AS builder_freesurfer
+FROM ubuntu:24.04 AS builder_freesurfer
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates wget tar && \
+    ca-certificates tar && \
     rm -rf /var/lib/apt/lists/*
 
-# Install FreeSurfer 7.4.1 (includes mri_synthseg and neural models)
-RUN wget --no-check-certificate -qO- "https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/7.4.1/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz" | tar zxv --no-same-owner -C /opt/
+# Install FreeSurfer from cached local tarball
+COPY .docker_cache/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz /tmp/fs.tar.gz
+RUN tar zxf /tmp/fs.tar.gz --no-same-owner -C /opt/ && rm /tmp/fs.tar.gz
 
 # ------------------------------------------------------------------------------
 # --- Stage 2: FSL ---
 # ------------------------------------------------------------------------------
-FROM ubuntu:22.04 AS builder_fsl
+FROM ubuntu:24.04 AS builder_fsl
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates wget python3 bc dc file libfontconfig1 libfreetype6 \
+    ca-certificates python3 bc dc file libfontconfig1 libfreetype6 \
     libgl1-mesa-dev libglu1-mesa libgomp1 libice6 libxcursor1 libxft2 \
-    libxinerama1 libxrandr2 libxrender1 libxt6 libquadmath0 libgtk2.0-0 \
+    libxinerama1 libxrandr2 libxrender1 libxt6 libquadmath0 \
     locales sudo bzip2 curl && \
     rm -rf /var/lib/apt/lists/*
 
-# Install FSL 6.0.7 using official installer
-RUN wget https://fsl.fmrib.ox.ac.uk/fsldownloads/fslconda/releases/fslinstaller.py && \
-    yes | python3 fslinstaller.py -d /opt/fsl -V 6.0.7 -r -n
-
-# Create symlink for conda as micromamba for compatibility
-RUN ln -s /opt/fsl/bin/micromamba /opt/fsl/bin/conda
+# Install FSL 6.0.7 using cached installer
+COPY .docker_cache/fslinstaller.py /tmp/fslinstaller.py
+RUN yes | python3 /tmp/fslinstaller.py -d /opt/fsl -V 6.0.7 -r -n && \
+    ln -s /opt/fsl/bin/micromamba /opt/fsl/bin/conda && \
+    rm -f /tmp/fslinstaller.py
 
 # ------------------------------------------------------------------------------
 # --- Stage 3: ANTs ---
 # ------------------------------------------------------------------------------
-FROM ubuntu:22.04 AS builder_ants
+FROM ubuntu:24.04 AS builder_ants
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates wget unzip && \
+    ca-certificates unzip && \
     rm -rf /var/lib/apt/lists/*
 
-# Install ANTs 2.5.0 precompiled binary
-RUN wget https://github.com/ANTsX/ANTs/releases/download/v2.5.0/ants-2.5.0-ubuntu-22.04-X64-gcc.zip && \
-    unzip ants-2.5.0-ubuntu-22.04-X64-gcc.zip -d /opt/ && \
+# Install ANTs 2.5.0 from cached zip
+COPY .docker_cache/ants-2.5.0-ubuntu-22.04-X64-gcc.zip /tmp/ants.zip
+RUN unzip /tmp/ants.zip -d /opt/ && \
     mv /opt/ants-2.5.0 /opt/ants && \
-    rm ants-2.5.0-ubuntu-22.04-X64-gcc.zip
+    rm -f /tmp/ants.zip
 
 # ------------------------------------------------------------------------------
 # --- Stage 4: MRtrix3 ---
 # ------------------------------------------------------------------------------
-FROM ubuntu:22.04 AS builder_mrtrix3
+FROM ubuntu:24.04 AS builder_mrtrix3
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git g++ python-is-python3 libeigen3-dev zlib1g-dev \
+    git g++ python3 python-is-python3 libeigen3-dev zlib1g-dev \
     libqt5opengl5-dev libqt5svg5-dev libgl1-mesa-dev libfftw3-dev \
-    libtiff5-dev libpng-dev ca-certificates && \
+    libtiff-dev libpng-dev ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
-# Build MRtrix3 3.0.4 from source
+# Build MRtrix3 (3.0.8 or master) from source
 RUN git clone https://github.com/MRtrix3/mrtrix3.git /opt/mrtrix3 && \
     cd /opt/mrtrix3 && \
-    git checkout 3.0.4 && \
+    (git checkout 3.0.8 || git checkout 3.0_RC3 || true) && \
     ./configure && \
     ./build
 
 # ------------------------------------------------------------------------------
 # --- Stage 5: Unified Runtime ---
 # ------------------------------------------------------------------------------
-FROM ubuntu:22.04 AS runtime
+FROM ubuntu:24.04 AS runtime
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=en_US.UTF-8 \
@@ -83,21 +83,19 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
     MPLCONFIGDIR=/tmp
 
-# Install runtime system packages and Python 3.12
+# Install runtime system packages and Native Python 3.12
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    software-properties-common gnupg gpg-agent ca-certificates wget curl unzip zip tar bzip2 bc dc gawk libgomp1 libquadmath0 \
+    ca-certificates wget curl unzip zip tar bzip2 bc dc gawk libgomp1 libquadmath0 \
     libglu1-mesa libxt6 libxmu6 libgl1 freeglut3-dev time tcsh parallel dcm2niix git sudo \
-    # Build & BLAS dependencies
+    # Python 3.12 (native) & build dependencies
+    python3 python3-pip python3-venv python3-dev python-is-python3 \
     build-essential gcc g++ libblas-dev liblapack-dev libfreetype6-dev \
     # FSL runtime dependencies
-    libfontconfig1 libice6 libsm6 libxcursor1 libxft2 libxinerama1 libxrandr2 libxrender1 libgtk2.0-0 \
+    libfontconfig1 libice6 libsm6 libxcursor1 libxft2 libxinerama1 libxrandr2 libxrender1 \
     # MRtrix3 runtime dependencies
-    libqt5opengl5 libqt5svg5 libqt5gui5 libqt5core5a libqt5widgets5 libfftw3-3 libtiff5 libpng16-16 \
+    libqt5opengl5t64 libqt5svg5 libqt5gui5t64 libqt5core5t64 libqt5widgets5t64 libfftw3-double3 libfftw3-single3 libtiff6 libpng16-16t64 \
     # Locales
     locales && \
-    add-apt-repository -y ppa:deadsnakes/ppa && \
-    apt-get update && apt-get install -y --no-install-recommends \
-    python3.12 python3.12-venv python3.12-dev && \
     locale-gen en_US.UTF-8 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -108,7 +106,7 @@ RUN echo 'will cite' | parallel --citation 1> /dev/null 2> /dev/null || true
 # Set up Python 3.12 Virtual Environment and Install Dependencies
 COPY requirements.txt /tmp/requirements.txt
 ENV VIRTUAL_ENV=/opt/venv
-RUN python3.12 -m venv $VIRTUAL_ENV
+RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \

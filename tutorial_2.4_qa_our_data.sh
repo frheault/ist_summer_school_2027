@@ -41,8 +41,8 @@ dwi2tensor bids_data/sub-01/ses-01/dwi/dwi.nii.gz dti.nii.gz \
 # [scilpy Version]
 # scil_dti_metrics bids_data/sub-01/ses-01/dwi/dwi.nii.gz bids_data/sub-01/ses-01/dwi/dwi.bval bids_data/sub-01/ses-01/dwi/dwi.bvec --tensor dti.nii.gz --rgb rgb.nii.gz --fa fa.nii.gz --mask b0_brain_mask.nii.gz
 
-# Step 4: Calculate DTI Scalar Maps (FA, MD, RD, AD, RGB, EV)
-echo "Step 4: Calculating scalar maps (FA, MD, RD, AD, RGB, EV)..."
+# Step 4: Calculate DTI Scalar Maps (FA, MD, RD, AD, RGB)
+echo "Step 4: Calculating scalar maps (FA, MD, RD, AD, RGB)..."
 # [MRtrix Version]
 tensor2metric dti.nii.gz \
     -fa fa.nii.gz \
@@ -50,7 +50,7 @@ tensor2metric dti.nii.gz \
     -rd rd.nii.gz \
     -ad ad.nii.gz \
     -vector rgb.nii.gz \
-    -evec ev.nii.gz \
-    -mask b0_brain_mask.nii.gz
+    -mask b0_brain_mask.nii.gz \
+    -force
 
 echo "Tutorial 2.4 complete. Inspect fa.nii.gz and rgb.nii.gz in mrview for quality control."

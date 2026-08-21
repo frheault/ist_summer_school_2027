@@ -42,12 +42,19 @@ check_py() {
 echo -e "\n--- Core Neuroimaging Tools ---" | tee -a "$LOG_FILE"
 check_cmd "bet" "FSL bet"
 check_cmd "flirt" "FSL flirt"
-check_cmd "antsRegistrationSyNQuick.sh" "ANTs registration"
+check_cmd "antsRegistrationSyNQuick.sh" "ANTs SyNQuick registration"
+check_cmd "antsApplyTransforms" "ANTs ApplyTransforms"
 check_cmd "mri_synthseg" "FreeSurfer SynthSeg"
-check_cmd "scil_header_print_info" "Scilpy header tool"
+
+echo -e "\n--- Scilpy Tools ---" | tee -a "$LOG_FILE"
+check_cmd "scil_header_print_info" "Scilpy header info"
+check_cmd "scil_NODDI_maps" "Scilpy NODDI fitting"
+check_cmd "scil_tractogram_segment_with_bundleseg" "Scilpy BundleSeg"
+check_cmd "scil_tractogram_qbx" "Scilpy QuickBundlesX"
+check_cmd "scil_bundle_compute_centroid" "Scilpy Bundle Centroids"
 
 echo -e "\n--- MRtrix3 Suite ---" | tee -a "$LOG_FILE"
-for cmd in mrinfo dwiextract dwi2tensor dwi2fod tckgen fod2fixel tcksift2 tck2connectome; do
+for cmd in mrinfo mrconvert mrcalc dwiextract dwi2tensor tensor2metric dwi2fod tckgen tckedit fod2fixel tcksift2 tck2connectome labelconvert transformconvert; do
     check_cmd "$cmd" "MRtrix3 $cmd"
 done
 
@@ -59,6 +66,7 @@ done
 echo -e "\n--- System Utilities ---" | tee -a "$LOG_FILE"
 check_cmd "dcm2niix" "dcm2niix"
 check_cmd "unzip" "unzip"
+check_cmd "curl" "curl"
 
 echo "=================================================" | tee -a "$LOG_FILE"
 if [ "$ERRORS" -eq 0 ]; then

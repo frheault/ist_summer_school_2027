@@ -35,24 +35,13 @@
 #     DIST_THRESH=15   → balanced clustering (default here)
 #     DIST_THRESH=20   → coarse clustering (~tens of clusters)
 #     DIST_THRESH=30   → very coarse, large anatomical bundles grouped
-# -----------------------------------------------------------------------
 DIST_THRESH=15
+INPUT_TCK="wb_250k.tck"
+REF_IMG="fa.nii.gz"
 
-# Input tractogram — prefer whole-brain, fall back to CC-seeded tractogram
-if [ -f "wb_250k.tck" ]; then
-    INPUT_TCK="wb_250k.tck"
-elif [ -f "wb_250k.trk" ]; then
-    INPUT_TCK="wb_250k.trk"
-elif [ -f "dti_det_cc_10k.tck" ]; then
-    INPUT_TCK="dti_det_cc_10k.tck"
-    echo "[WARNING] Using small CC tractogram. For meaningful clustering, run tutorial_4.3 first."
-else
-    echo "[ERROR] No tractogram found. Run tutorial_4.3_bundle_segmentation.sh first."
-    exit 1
-fi
-
-echo "Using tractogram : ${INPUT_TCK}"
+echo "Using tractogram  : ${INPUT_TCK}"
 echo "Distance threshold: ${DIST_THRESH} mm"
+echo "Spatial reference : ${REF_IMG}"
 
 # -----------------------------------------------------------------------
 # Step 1: Run QuickBundlesX clustering
@@ -64,17 +53,11 @@ mkdir -p qbx_clusters
 scil_tractogram_qbx "${INPUT_TCK}" "${DIST_THRESH}" qbx_clusters/ \
     --nb_points 20 \
     --out_centroids qbx_centroids.trk \
-    --reference fa.nii.gz \
+    --reference "${REF_IMG}" \
     -f -v
 
 NUM_CLUSTERS=$(ls qbx_clusters/*.trk 2>/dev/null | wc -l)
 echo "Clustering complete: ${NUM_CLUSTERS} clusters saved in qbx_clusters/"
-
-# Thread limits
-export OMP_NUM_THREADS=4
-export OPENBLAS_NUM_THREADS=4
-export MRTRIX_NTHREADS=4
-export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=4
 
 # -----------------------------------------------------------------------
 # Step 2: Find the largest cluster by streamline count (file size proxy)
@@ -82,17 +65,8 @@ export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=4
 echo ""
 echo "Step 2: Finding the largest cluster..."
 
-BIGGEST_CLUSTER=$(ls -S qbx_clusters/cluster_*.trk 2>/dev/null | head -n 1)
-if [ -z "$BIGGEST_CLUSTER" ]; then
-    BIGGEST_CLUSTER=$(ls -S cluster_*.trk 2>/dev/null | head -n 1)
-fi
-
-if [ -z "$BIGGEST_CLUSTER" ]; then
-    echo "[ERROR] No clusters found. Did Step 1 succeed?"
-    exit 1
-fi
-
-echo "Largest cluster : ${BIGGEST_CLUSTER}"
+BIGGEST_CLUSTER=$(ls -S qbx_clusters/cluster_*.trk | head -n 1)
+echo "Largest cluster  : ${BIGGEST_CLUSTER}"
 
 
 # -----------------------------------------------------------------------
@@ -103,7 +77,7 @@ echo "Step 3: Computing shape measures on the largest cluster..."
 
 scil_bundle_shape_measures "${BIGGEST_CLUSTER}" \
     --out_json qbx_biggest_cluster_shape.json \
-    --reference fa.nii.gz \
+    --reference "${REF_IMG}" \
     --indent 2 \
     -f
 

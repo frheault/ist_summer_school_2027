@@ -19,11 +19,14 @@ find . -maxdepth 1 \
     -not -name "*schedule*" \
     -not -name "*.xlsx" \
     -not -name "clean_repo.sh" \
+    -not -name "prepare_docker.sh" \
+    -not -name ".docker_cache" \
     -not -name "run_all_tutorials.sh" \
     -not -name "check_installation.sh" \
     -not -name "check_setup.sh" \
     -not -name ".git" \
     -not -name ".gitignore" \
+    -not -name ".dockerignore" \
     -not -name "venv" \
     -not -name ".venv" \
     -not -name "." \

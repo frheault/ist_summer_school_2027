@@ -1,6 +1,19 @@
+# Generated data directories & outputs
 bids_data/
 dicom_data/
 nifti_data/
+NODDI_results/
+fixel_dir/
+bundleseg_automated/
+zenodo_scil_atlas/
+connections/
+tractometry_results/
+tractometry_profiles_plot/
+qbx_clusters/
+logs/
+.docker_cache/
+
+# Generated neuroimaging & tabular data files
 *.nii
 *.nii.gz
 *.csv
@@ -10,14 +23,21 @@ nifti_data/
 *.mat
 *.json
 *.sif
-zenodo_scil_atlas/
-bundleseg_automated/
-connections/
-installation_check.log
+*.log
+pipeline_report.txt
+fslinstaller.py
+from_mni_*.txt
 assignments.txt
 frf.txt
-tractometry_profiles_plot/
+wm.txt
+gm.txt
+csf.txt
+sift2_weights.txt
+
+# Python environments, checkpoints & caches
 venv/
 .venv/
 .pytest_cache/
 __pycache__/
+.ipynb_checkpoints/
+*.tmp

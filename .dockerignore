@@ -1,0 +1,10 @@
+.git
+bids_data
+dicom_data
+nifti_data
+logs
+*.nii.gz
+*.tck
+*.trk
+*.mif
+*.log
