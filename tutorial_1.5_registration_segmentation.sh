@@ -51,9 +51,13 @@ antsRegistrationSyNQuick.sh -d 3 \
 
 # Step 4: Run SynthSeg parcellation on the T1w image
 echo "Step 4: Running FreeSurfer SynthSeg parcellation on T1w..."
+# If this command fails (on macOS or due to RAM constraints), you can transform
+# pre-computed labels from template space using flirt/ants as a fallback:
+# flirt -in template/mni_masked.nii.gz -ref b0_brain.nii.gz -applyxfm -init from_mni_fsl_mat.txt -out synthseg_in_dwi.nii.gz -interp nearestneighbour
 mri_synthseg --i bids_data/sub-01/ses-01/anat/t1.nii.gz \
              --o t1_synthseg.nii.gz \
              --robust --parc --threads 4
+
 
 # Step 5: Bring the SynthSeg parcellation into DWI space (nearest-neighbor to preserve label integers)
 echo "Step 5: Transforming SynthSeg parcellation into DWI space..."
