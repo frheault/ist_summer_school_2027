@@ -105,6 +105,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Silence the citation notice for GNU Parallel
 RUN echo 'will cite' | parallel --citation 1> /dev/null 2> /dev/null || true
 
+# Set up Python 3.12 Virtual Environment and Install Dependencies
+COPY requirements.txt /tmp/requirements.txt
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3.12 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r /tmp/requirements.txt && \
+    rm /tmp/requirements.txt
+
 # Copy software binaries from builder stages
 COPY --from=builder_freesurfer /opt/freesurfer /opt/freesurfer
 COPY --from=builder_fsl /opt/fsl /opt/fsl
@@ -114,16 +124,6 @@ COPY --from=builder_mrtrix3 /opt/mrtrix3 /opt/mrtrix3
 # Set up FreeSurfer license
 RUN wget -q --no-check-certificate -O /opt/freesurfer/.license "https://www.dropbox.com/s/zs4k3bcfxderj58/license.txt?dl=0" || \
     echo "academic_user@ist2027\n00000\n *XXXXXX*\n FSYYYYYY" > /opt/freesurfer/.license
-
-# Copy requirements and install in a dedicated virtualenv with Python 3.12
-COPY requirements.txt /tmp/requirements.txt
-ENV VIRTUAL_ENV=/opt/venv
-RUN python3.12 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir -r /tmp/requirements.txt && \
-    rm /tmp/requirements.txt
 
 # Global Neuroimaging Environment Variables
 ENV FREESURFER_HOME=/opt/freesurfer \
