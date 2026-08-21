@@ -24,9 +24,9 @@ torchaudio>=2.0.0,<2.5.0
 # --- Data Science, Connectomics & Statistical Analysis ---
 pandas>=2.0.0,<3.1.0
 networkx>=3.0,<4.0
-scikit-learn>=1.2.0,<1.6.0
+scikit-learn>=1.2.0,<1.8.0
 scikit-image>=0.20.0,<0.26.0
-statsmodels>=0.14.0,<0.15.0
+statsmodels>=0.14.0
 
 # --- Visualization & Plotting ---
 matplotlib>=3.7.0,<4.0.0

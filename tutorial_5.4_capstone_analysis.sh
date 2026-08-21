@@ -22,11 +22,9 @@ tcksift2 wb_250k.tck wmfod.nii.gz sift2_weights.txt -nthreads 4 -force
 
 # Step 2: Parcellation Node Relabeling
 echo "Step 2: Relabeling parcellation nodes for connectomics..."
-if [ -f "b0_synthseg.nii.gz" ]; then
-    labelconvert b0_synthseg.nii.gz template/FreeSurferColorLUT.txt template/MrtrixLUT.txt synthseg_relabeled_nodes.nii.gz -force
-elif [ -f "synthseg_in_dwi.nii.gz" ]; then
-    labelconvert synthseg_in_dwi.nii.gz template/FreeSurferColorLUT.txt template/MrtrixLUT.txt synthseg_relabeled_nodes.nii.gz -force
-fi
+labelconvert synthseg_in_dwi.nii.gz template/FreeSurferColorLUT.txt template/MrtrixLUT.txt synthseg_relabeled_nodes.nii.gz -force
+
+
 
 # Step 3: Generate Connectome Matrices (Raw & SIFT2-Weighted)
 echo "Step 3: Generating structural connectivity matrices..."

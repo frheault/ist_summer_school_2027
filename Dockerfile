@@ -85,7 +85,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 # Install runtime system packages and Python 3.12
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    software-properties-common ca-certificates wget curl unzip zip tar bzip2 bc dc gawk libgomp1 libquadmath0 \
+    software-properties-common gnupg gpg-agent ca-certificates wget curl unzip zip tar bzip2 bc dc gawk libgomp1 libquadmath0 \
     libglu1-mesa libxt6 libxmu6 libgl1 freeglut3-dev time tcsh parallel dcm2niix git sudo \
     # Build & BLAS dependencies
     libblas-dev liblapack-dev libfreetype6-dev \
@@ -120,7 +120,6 @@ COPY requirements.txt /tmp/requirements.txt
 ENV VIRTUAL_ENV=/opt/venv
 RUN python3.12 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-ENV SETUPTOOLS_USE_DISTUTILS=stdlib
 
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
     pip install --no-cache-dir -r /tmp/requirements.txt && \
