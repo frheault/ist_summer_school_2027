@@ -44,33 +44,33 @@ The workshop covers practical diffusion MRI processing and analysis across five 
 |:---:|:-------:|:----:|:----:|:------|:-------------------|:------------------|
 | **Day 1** | **1.1** | 09:15–10:15 | Lecture | Why is neuroimaging useful? Clinical & Translational dMRI | Luis Concha | Keynote |
 | | **1.2** | 10:45–11:45 | Lecture | Data Representations & Transformations (Spaces, Grids, Strides) | Francois Rheault | Lecture |
-| | **1.3** | 13:15–15:15 | Clinic | Installation, Setup & Environment Verification | Organizers & TAs | `check_installation.sh` |
+| | **1.3** | 13:15–15:15 | Clinic | Installation, Setup & Environment Verification | Organizers & TAs | `check_installation.sh`<br>`tutorial_1.0_setup_data.sh` |
 | | **1.4** | 15:15–16:15 | Lecture | Introduction to dMRI Physics, Gradients & Attenuation | Alexander Leemans | Lecture |
 | | **1.5** | 16:15–17:30 | **Lab** | Multimodal Registration (ANTs) & SynthSeg AI Segmentation | Hands-on Lab | `tutorial_1.5_registration_segmentation.sh` |
 | **Day 2** | **2.1** | 09:00–09:45 | Lecture | Connectional Anatomy & White Matter Architecture | Chiara Maffei | Lecture |
 | | **2.2** | 09:45–10:30 | Lecture | Preprocessing Overview: Artifacts, Noise & Distortions | Francois Rheault | Lecture |
 | | **2.3** | 11:00–12:00 | Lecture | Modeling Overview: From Raw DWI to Orientation Fields | Alonso Ramirez | Lecture |
 | | **2.4** | 13:30–14:15 | **Lab** | Quality Assurance & DTI Tensor Fitting (Our Data) | Hands-on Lab | `tutorial_2.4_qa_our_data.sh` |
-| | **2.5** | 14:15–15:00 | **Lab** | Quality Assurance & Troubleshooting (Your Data) | Hands-on Lab | Participant Data Clinic |
+| | **2.5** | 14:15–15:00 | **Lab** | Quality Assurance & Troubleshooting (Your Data) | Hands-on Lab | `tutorial_2.5_qa_your_data.sh` |
 | | **2.6** | 15:00–16:00 | Lecture | Tractography Introduction: Numerical Streamline Integration | Donald Tournier | Lecture |
 | | **2.7** | 16:00–17:30 | **Lab** | Deterministic DTI Tractography of the Corpus Callosum | Hands-on Lab | `tutorial_2.7_det_tractography.sh` |
 | **Day 3** | **3.1** | 09:00–10:00 | Lecture | Intro to Microstructure Modelling (NODDI, DKI, MAP-MRI) | Alonso Ramirez | Lecture |
 | | **3.2** | 10:30–11:30 | Lecture | Fixel-Based Analysis (FBA): FD, FC, and FDC Metrics | Donald Tournier | Lecture |
-| | **3.3** | 11:30–12:30 | **Lab** | Microstructure Modeling: AMICO NODDI & DIPY DKI | Hands-on Lab | `tutorial_3.3_microstructure.sh`<br>`notebooks/Day3_Microstructure.ipynb` |
+| | **3.3** | 11:30–12:30 | **Lab** | Microstructure Modeling: AMICO NODDI & DIPY DKI | Hands-on Lab | `tutorial_3.3_microstructure.sh`<br>`notebooks/Day3_Microstructure_NODDI_DKI.ipynb` |
 | | **3.4** | 14:00–14:45 | **Lab** | Fixel-Based Analysis & FBA Extraction (Our Data) | Hands-on Lab | `tutorial_3.4_fixels_our_data.sh` |
-| | **3.5** | 14:45–15:45 | **Lab** | Microstructure & Fixels on Personal Acquisitions | Hands-on Lab | Participant Data Clinic |
+| | **3.5** | 14:45–15:45 | **Lab** | Microstructure & Fixels on Personal Acquisitions | Hands-on Lab | `tutorial_3.5_microstructure_your_data.sh` |
 | | **3.6** | 15:45–16:30 | Lecture | Tractography: Anatomy of a Command Line (CSD & ACT) | Donald Tournier | Lecture |
 | | **3.7** | 16:30–17:30 | **Lab** | MSMT-CSD & Probabilistic Streamline Tractography | Hands-on Lab | `tutorial_3.7_csd_tractography.sh` |
 | **Day 4** | **4.1** | 09:00–09:30 | Lecture | Preprocessing In-Depth: The Power of Automated Pipelines | Francois Rheault | Lecture |
 | | **4.2** | 10:00–10:45 | Lecture | Bundle Segmentation: From Spaghetti to Highways | Chiara Maffei | Lecture |
 | | **4.3** | 10:45–12:15 | **Lab** | 250k Whole-Brain Tractogram, Manual CST & BundleSeg | Hands-on Lab | `tutorial_4.3_bundle_segmentation.sh` |
-| | **4.4** | 13:45–14:45 | **Lab** | Automated Bundle Segmentation (Your Data) | Hands-on Lab | Participant Data Clinic |
+| | **4.4** | 13:45–14:45 | **Lab** | Automated Bundle Segmentation (Your Data) | Hands-on Lab | `tutorial_4.4_bundle_segmentation_your_data.sh` |
 | | **4.5** | 14:45–15:45 | Lecture | Tractometry: Quantitative Profiling Along Pathways | Alexander Leemans | Lecture |
-| | **4.6** | 15:45–17:15 | **Lab** | From Tracts to Tables: Centroids, Profiling & JSON/CSV | Hands-on Lab | `tutorial_4.6_tracts_to_tables.sh`<br>`notebooks/Day4_Tractometry.ipynb` |
-| **Day 5** | **5.1** | 09:00–10:00 | Lecture | Tractography Clustering: QuickBundles & Superficial WM | Pamela Guevara | Lecture |
-| | **5.2** | 10:30–11:30 | Lecture | Structural Connectomics: SIFT2 Weighting & Graph Theory | Alessandro Daducci | Lecture |
+| | **4.6** | 15:45–17:15 | **Lab** | From Tracts to Tables: Centroids, Profiling & JSON/CSV | Hands-on Lab | `tutorial_4.6_tracts_to_tables.sh`<br>`notebooks/Day4_Tractometry_Profiling.ipynb` |
+| **Day 5** | **5.1** | 09:00–10:00 | Lecture / **Lab** | Tractography Clustering: QuickBundles & Superficial WM | Pamela Guevara | `tutorial_5.1_clustering.sh` |
+| | **5.2** | 10:30–11:30 | Lecture | Structural Connectomics: SIFT2 Weighting & Graph Theory | Alessandro Daducci | `tutorial_5.2_connectomics.py` |
 | | **5.3** | 11:30–12:30 | Panel | Experimental Study Design, Multi-Site QC & Pitfalls | Luis Concha & Alexander Leemans | Interactive Panel |
-| | **5.4** | 15:00–18:00 | **Lab** | Capstone Project Sprint: Build Your Analysis Pipeline | Hands-on Hackathon | `tutorial_5.4_capstone_analysis.sh`<br>`notebooks/Day5_Connectomics.ipynb` |
+| | **5.4** | 15:00–18:00 | **Lab** | Capstone Project Sprint: Build Your Analysis Pipeline | Hands-on Hackathon | `tutorial_5.4_capstone_analysis.sh`<br>`notebooks/Day5_Connectomics_Graph_Theory.ipynb` |
 
 ---
 
@@ -231,9 +231,9 @@ dicom_filtered_sub01.zip
    │  → Corpus Callosum deterministic DTI streamline tractography:
    │    dwi_brain.mif, fa_thr.nii.gz, dti_det_cc_10k.tck
    ▼
-[3.3] tutorial_3.3_microstructure.sh ──► notebooks/Day3_Microstructure.ipynb
+[3.3] tutorial_3.3_microstructure.sh ──► notebooks/Day3_Microstructure_NODDI_DKI.ipynb
    │  → AMICO NODDI biophysical modeling & DIPY/Scilpy DKI kurtosis fitting:
-   │    NDI.nii.gz, ODI.nii.gz, ISOVF.nii.gz, mk.nii.gz, ak.nii.gz, rk.nii.gz
+   │    NDI.nii.gz, ODI.nii.gz, ISOVF.nii.gz, dki_mk.nii.gz, dki_ak.nii.gz, dki_rk.nii.gz
    ▼
 [3.4] tutorial_3.4_fixels_our_data.sh
    │  → MRtrix3 FBA fODF segmentation & Fiber Density (FD) metric extraction:
@@ -247,13 +247,17 @@ dicom_filtered_sub01.zip
    │  → 250k whole-brain tractogram, manual CST_L dissection, automated BundleSeg:
    │    wb_250k.tck, CST_L.tck, zenodo_scil_atlas/, bundleseg_automated/ (*.tck)
    ▼
-[4.6] tutorial_4.6_tracts_to_tables.sh ──► notebooks/Day4_Tractometry.ipynb
-   │  → Centroids, label maps, 100-node along-tract profilometry, JSON & CSV export:
+[4.6] tutorial_4.6_tracts_to_tables.sh ──► notebooks/Day4_Tractometry_Profiling.ipynb
+   │  → Centroids, label maps, along-tract profilometry, JSON & CSV export:
    │    tractometry_results/, tractometry_profiles.json, tract_profiles.csv
    ▼
-[5.4] tutorial_5.4_capstone_analysis.sh ──► notebooks/Day5_Connectomics.ipynb
-   │  → QuickBundles clustering, SIFT2 weighting, connectome matrices, NetworkX graph analysis:
-   │    sift2_weights.txt, connectome_sift2.csv, network_metrics.json, qbx_clusters/
+[5.1] tutorial_5.1_clustering.sh
+   │  → QuickBundlesX streamline clustering, centroid streamlines & shape measures:
+   │    qbx_clusters/, qbx_centroids.trk, qbx_biggest_cluster_shape.json
+   ▼
+[5.4] tutorial_5.4_capstone_analysis.sh ──► notebooks/Day5_Connectomics_Graph_Theory.ipynb
+   │  → SIFT2 weighting, connectome matrices, NetworkX graph analysis:
+   │    sift2_weights.txt, connectome_sift2.csv, network_metrics.json
    ▼
 [Validation] clean_repo.sh + End-to-End Pipeline Execution Check
 ```
@@ -282,7 +286,8 @@ Execute each tutorial script sequentially in your terminal:
 ./tutorial_4.3_bundle_segmentation.sh
 ./tutorial_4.6_tracts_to_tables.sh
 
-# Day 5: Connectomics, SIFT2 & Graph Analysis Capstone
+# Day 5: Streamline Clustering, Connectomics, SIFT2 & Graph Analysis Capstone
+./tutorial_5.1_clustering.sh
 ./tutorial_5.4_capstone_analysis.sh
 ```
 
@@ -304,9 +309,9 @@ jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
 Access the Jupyter server by opening `http://localhost:8888` in your host browser.
 
 ### Available Notebooks in `notebooks/`:
-- **`notebooks/Day3_Microstructure.ipynb`**: Interactive fitting of AMICO NODDI and DIPY DKI models, voxel-wise parameter slicing, and comparison with tensor metrics in crossing fiber regions.
-- **`notebooks/Day4_Tractometry.ipynb`**: Loading tractometry JSON deliverables, plotting along-tract FA/MD/NDI profiles with confidence intervals across bundles, and running statistical tests.
-- **`notebooks/Day5_Connectomics.ipynb`**: Structural connectome visualization (heatmaps, chord diagrams), SIFT2 weighting comparisons, and graph-theoretical network analysis with NetworkX.
+- **`notebooks/Day3_Microstructure_NODDI_DKI.ipynb`**: Interactive fitting and visualization of AMICO NODDI and DIPY DKI models, voxel-wise parameter slicing, and comparison with tensor metrics in crossing fiber regions.
+- **`notebooks/Day4_Tractometry_Profiling.ipynb`**: Loading along-tract JSON profile deliverables, plotting along-tract FA/MD/NDI profiles with confidence ribbons across bundles, and running statistical tests.
+- **`notebooks/Day5_Connectomics_Graph_Theory.ipynb`**: Structural connectome visualization (raw vs. SIFT2 matrices), hub node identification, and graph-theoretical network analysis with NetworkX.
 
 ---
 
@@ -314,37 +319,41 @@ Access the Jupyter server by opening `http://localhost:8888` in your host browse
 
 ```
 ist_summer_school_2027/
-├── .agents/                                  # AI agent workspace metadata
-├── bids_data/                                # BIDS structured NIfTI data (generated by 1.0)
+├── .agents/                                    # AI agent workspace metadata
+├── bids_data/                                  # BIDS structured NIfTI data (generated by 1.0)
 │   └── sub-01/ses-01/{anat,dwi}/
-├── notebooks/                                # Interactive Python Jupyter Notebooks
-│   ├── Day3_Microstructure.ipynb             # Microstructure modeling (NODDI/DKI)
-│   ├── Day4_Tractometry.ipynb                # Along-tract profilometry & stats
-│   └── Day5_Connectomics.ipynb               # Structural connectomics & graph theory
-├── template/                                 # Anatomical templates and lookup tables
-│   ├── FreeSurferColorLUT.txt                # FreeSurfer label lookup table
-│   ├── MrtrixLUT.txt                         # MRtrix3 connectome node lookup table
-│   ├── cc.nii.gz                             # MNI152 Corpus Callosum binary mask
-│   └── mni_masked.nii.gz                     # MNI152 1mm brain reference volume
-├── tutorial_1.0_setup_data.sh                # Day 1: Data extraction & BIDS conversion
+├── notebooks/                                  # Interactive Python Jupyter Notebooks
+│   ├── Day3_Microstructure_NODDI_DKI.ipynb     # Microstructure modeling (NODDI/DKI)
+│   ├── Day4_Tractometry_Profiling.ipynb        # Along-tract profilometry & stats
+│   └── Day5_Connectomics_Graph_Theory.ipynb    # Structural connectomics & graph theory
+├── template/                                   # Anatomical templates and lookup tables
+│   ├── FreeSurferColorLUT.txt                  # FreeSurfer label lookup table
+│   ├── MrtrixLUT.txt                           # MRtrix3 connectome node lookup table
+│   ├── cc.nii.gz                               # MNI152 Corpus Callosum binary mask
+│   └── mni_masked.nii.gz                       # MNI152 1mm brain reference volume
+├── tutorial_1.0_setup_data.sh                  # Day 1: Data extraction & BIDS conversion
 ├── tutorial_1.5_registration_segmentation.sh   # Day 1: ANTs registration & SynthSeg segmentation
-├── tutorial_2.4_qa_our_data.sh               # Day 2: Metadata QA & DTI tensor fitting
-├── tutorial_2.7_det_tractography.sh          # Day 2: Deterministic CC DTI tractography
-├── tutorial_3.3_microstructure.sh            # Day 3: AMICO NODDI & DIPY DKI fitting
-├── tutorial_3.4_fixels_our_data.sh           # Day 3: MRtrix3 FBA fixel segmentation
-├── tutorial_3.7_csd_tractography.sh          # Day 3: MSMT-CSD & probabilistic tracking
-├── tutorial_4.3_bundle_segmentation.sh       # Day 4: Whole-brain tracking, CST & BundleSeg
-├── tutorial_4.6_tracts_to_tables.sh          # Day 4: Tractometry profiling & CSV export
-├── tutorial_5.4_capstone_analysis.sh         # Day 5: QuickBundles, SIFT2 connectome & NetworkX
-├── check_installation.sh                     # Comprehensive environment diagnostic script
-├── clean_repo.sh                             # Safe workspace cleanup utility
-├── launch_jupyter.sh                         # JupyterLab server launcher
-├── Dockerfile                                # Multi-stage container recipe
-├── requirements.txt                          # Python package dependencies
-├── NOTEBOOK.md                               # Comprehensive 5-Day PhD Study Guide
-├── NEW_CURRICULUM.md                         # Harmonized 5-day workshop syllabus
-├── PROJECT.md                                # Technical project architecture & contracts
-└── README.md                                 # Workshop guide and landing page
+├── tutorial_2.4_qa_our_data.sh                 # Day 2: Metadata QA & DTI tensor fitting
+├── tutorial_2.5_qa_your_data.sh                # Day 2: Quality assurance on personal data
+├── tutorial_2.7_det_tractography.sh            # Day 2: Deterministic CC DTI tractography
+├── tutorial_3.3_microstructure.sh              # Day 3: AMICO NODDI & DIPY DKI fitting
+├── tutorial_3.4_fixels_our_data.sh             # Day 3: MRtrix3 FBA fixel segmentation
+├── tutorial_3.5_microstructure_your_data.sh    # Day 3: Microstructure & fixels on personal data
+├── tutorial_3.7_csd_tractography.sh            # Day 3: MSMT-CSD & probabilistic tracking
+├── tutorial_4.3_bundle_segmentation.sh         # Day 4: Whole-brain tracking, CST & BundleSeg
+├── tutorial_4.4_bundle_segmentation_your_data.sh # Day 4: Bundle segmentation on personal data
+├── tutorial_4.6_tracts_to_tables.sh            # Day 4: Tractometry profiling & CSV export
+├── tutorial_5.1_clustering.sh                  # Day 5: QuickBundlesX streamline clustering
+├── tutorial_5.2_connectomics.py                # Day 5: NetworkX graph theory analysis
+├── tutorial_5.4_capstone_analysis.sh           # Day 5: SIFT2 connectome & NetworkX Capstone
+├── check_installation.sh                       # Comprehensive environment diagnostic script
+├── clean_repo.sh                               # Safe workspace cleanup utility
+├── launch_jupyter.sh                           # JupyterLab server launcher
+├── Dockerfile                                  # Multi-stage container recipe
+├── requirements.txt                            # Python package dependencies
+├── NOTEBOOK.md                                 # Comprehensive 5-Day PhD Study Guide
+├── IST_summer_school_curriculum.md             # Complete curriculum & syllabus
+└── README.md                                   # Workshop guide and landing page
 ```
 
 ---

@@ -14,12 +14,6 @@ trx-python>=0.4.0
 dipy>=1.9.0,<1.13.0
 dmri-amico>=2.1.0
 scilpy>=2.0.0,<2.4.0
-pyAFQ>=1.3.0
-
-# --- Deep Learning & AI (SynthSeg & Neural Models) ---
-torch>=2.0.0,<2.5.0
-torchvision>=0.15.0,<0.20.0
-torchaudio>=2.0.0,<2.5.0
 
 # --- Data Science, Connectomics & Statistical Analysis ---
 pandas>=2.0.0,<3.1.0
@@ -34,7 +28,6 @@ seaborn>=0.12.0,<0.14.0
 
 # --- Interactive Notebooks & Utilities ---
 jupyterlab>=4.0.0,<5.0.0
-notebook>=7.0.0,<8.0.0
 ipywidgets>=8.0.0,<9.0.0
 ipykernel>=6.20.0,<7.0.0
 tqdm>=4.65.0

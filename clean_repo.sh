@@ -21,7 +21,6 @@ find . -maxdepth 1 \
     -not -name "check_setup.sh" \
     -not -name ".git" \
     -not -name ".gitignore" \
-
     -not -name "." \
     -exec rm -rf {} +
 

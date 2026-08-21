@@ -11,9 +11,9 @@ echo "=================================================" | tee -a "$LOG_FILE"
 # Environment auto-detection and setup
 [ -z "$FREESURFER_HOME" ] && for d in /usr/local/freesurfer/8.2.0 /usr/local/freesurfer/8.0.0 /usr/local/freesurfer/7.4.1 /opt/freesurfer; do [ -d "$d" ] && export FREESURFER_HOME="$d" && break; done
 [ -n "$FREESURFER_HOME" ] && [ -f "$FREESURFER_HOME/SetUpFreeSurfer.sh" ] && . "$FREESURFER_HOME/SetUpFreeSurfer.sh" > /dev/null 2>&1
-[ -z "$FSLDIR" ] && for d in /home/local/USHERBROOKE/rhef1902/Libraries/fsl /usr/local/fsl /usr/share/fsl; do [ -d "$d" ] && export FSLDIR="$d" && break; done
+[ -z "$FSLDIR" ] && for d in /opt/fsl /usr/local/fsl /usr/share/fsl; do [ -d "$d" ] && export FSLDIR="$d" && break; done
 [ -n "$FSLDIR" ] && [ -f "$FSLDIR/etc/fslconf/fsl.sh" ] && . "$FSLDIR/etc/fslconf/fsl.sh" > /dev/null 2>&1
-[ -z "$ANTSPATH" ] && for d in /home/local/USHERBROOKE/rhef1902/Libraries/ANTs/ants-2.6.5/bin /usr/local/ants/bin /usr/lib/ants; do [ -d "$d" ] && export ANTSPATH="$d" && export PATH="$ANTSPATH:$PATH" && break; done
+[ -z "$ANTSPATH" ] && for d in /opt/ants/bin /usr/local/ants/bin /usr/lib/ants; do [ -d "$d" ] && export ANTSPATH="$d" && export PATH="$ANTSPATH:$PATH" && break; done
 
 check_cmd() {
     local cmd="$1"

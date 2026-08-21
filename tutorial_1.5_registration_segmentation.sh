@@ -68,9 +68,9 @@ antsApplyTransforms -d 3 \
     -n NearestNeighbor \
     -o synthseg_in_dwi.nii.gz
 
-# Step 6: Extract White Matter mask and Corpus Callosum ROI from the DWI-space parcellation
+# Step 6: Extract anatomical ROIs from the DWI-space parcellation
 # SynthSeg WM label IDs: 2 (Left cerebral WM), 41 (Right cerebral WM)
-echo "Step 6: Extracting WM mask and Corpus Callosum ROI..."
+echo "Step 6: Extracting WM mask, CC, and CST inclusion ROIs..."
 mrcalc synthseg_in_dwi.nii.gz 2 -eq \
        synthseg_in_dwi.nii.gz 41 -eq -add \
        wm_mask.nii.gz -force
@@ -84,6 +84,12 @@ mrcalc synthseg_in_dwi.nii.gz 192 -eq \
        synthseg_in_dwi.nii.gz 255 -eq -add \
        cc_roi_synthseg.nii.gz -force
 
+# Corticospinal Tract (CST) Left inclusion ROIs:
+# SynthSeg label IDs: 1024 (Left Precentral Gyrus / Primary Motor Cortex), 16 (Brainstem)
+mrcalc synthseg_in_dwi.nii.gz 1024 -eq cst_roi_precentral_l.nii.gz -force
+mrcalc synthseg_in_dwi.nii.gz 16 -eq cst_roi_brainstem.nii.gz -force
+
 echo "Tutorial 1.5 complete."
 echo "Generated: b0_brain.nii.gz, b0_brain_mask.nii.gz, cc_roi.nii.gz (MNI-atlas)"
-echo "           synthseg_in_dwi.nii.gz, wm_mask.nii.gz, cc_roi_synthseg.nii.gz (SynthSeg)"
+echo "           synthseg_in_dwi.nii.gz, wm_mask.nii.gz, cc_roi_synthseg.nii.gz"
+echo "           cst_roi_precentral_l.nii.gz, cst_roi_brainstem.nii.gz"

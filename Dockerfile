@@ -88,7 +88,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     software-properties-common gnupg gpg-agent ca-certificates wget curl unzip zip tar bzip2 bc dc gawk libgomp1 libquadmath0 \
     libglu1-mesa libxt6 libxmu6 libgl1 freeglut3-dev time tcsh parallel dcm2niix git sudo \
     # Build & BLAS dependencies
-    libblas-dev liblapack-dev libfreetype6-dev \
+    build-essential gcc g++ libblas-dev liblapack-dev libfreetype6-dev \
     # FSL runtime dependencies
     libfontconfig1 libice6 libsm6 libxcursor1 libxft2 libxinerama1 libxrandr2 libxrender1 libgtk2.0-0 \
     # MRtrix3 runtime dependencies

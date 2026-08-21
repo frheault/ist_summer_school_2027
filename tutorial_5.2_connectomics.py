@@ -34,12 +34,24 @@ print(f"  Graph Density           : {density:.4f}")
 print(f"  Global Efficiency       : {global_eff:.4f}")
 print(f"  Weighted Avg Clustering : {avg_clustering:.4f}")
 
+# Load anatomical node names from LUT if available
+lut_file = "template/MrtrixLUT.txt" if os.path.exists("template/MrtrixLUT.txt") else "../template/MrtrixLUT.txt"
+lut_names = {}
+if os.path.exists(lut_file):
+    with open(lut_file, "r") as f:
+        for line in f:
+            parts = line.strip().split()
+            if len(parts) >= 3 and parts[0].isdigit():
+                idx = int(parts[0]) - 1  # 0-indexed matrix node
+                lut_names[idx] = parts[2]
+
 # Find top 5 hub nodes by node strength (weighted degree)
 strengths = dict(G.degree(weight="weight"))
 top_hubs = sorted(strengths.items(), key=lambda x: x[1], reverse=True)[:5]
 
 print("\n--- Top 5 Hub Nodes by Connection Strength ---")
 for node, str_val in top_hubs:
-    print(f"  Node {node:02d}: Strength = {str_val:.2f}")
+    label_str = f" ({lut_names[node]})" if node in lut_names else ""
+    print(f"  Node {node:02d}{label_str}: Strength = {str_val:.2f}")
 
 print("\nTutorial 5.2 complete.")
