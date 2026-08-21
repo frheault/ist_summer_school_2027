@@ -112,9 +112,12 @@ Then open `http://localhost:8888` in your laptop browser to access notebooks in 
 
 ## Day 5: Clustering, Connectomics & Capstone Project
 
-### Hands-on 5.1: Tractography Clustering (`tutorial_5.1_clustering.py`)
-* **Context**: Unsupervised geometric clustering with QuickBundles groups whole-brain tractograms into coherent bundles based on streamline shape and distance.
-* **Action**: Runs QuickBundles (`dipy.segment.clustering.QuickBundles`) with a 15mm threshold.
+### Hands-on 5.1: Tractography Clustering (`tutorial_5.1_clustering.sh`)
+* **Context**: Unsupervised geometric clustering groups whole-brain tractograms into coherent bundles based on streamline shape and distance without requiring prior anatomical definitions.
+* **Action**:
+  1. Runs QuickBundlesX clustering via `scil_tractogram_qbx` with configurable distance threshold (default 15mm).
+  2. Identifies the largest cluster and computes geometric shape metrics (`scil_bundle_shape_measures`).
+* **Quality Control**: Open `fa.nii.gz` in MI-Brain and load all generated cluster `.trk` files from `qbx_clusters/` to inspect multi-bundle color-coded clustering. Load `qbx_centroids.trk` for centroid trajectories.
 
 ### Hands-on 5.2: Connectomics & Graph Theory (`tutorial_5.2_connectomics.py`)
 * **Context**: Constructs structural brain networks where nodes are anatomical cortical/subcortical regions and edges are streamline connections. Computes network topology metrics with NetworkX (density, global efficiency, hub centrality).

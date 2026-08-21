@@ -44,6 +44,13 @@ dwi2tensor bids_data/sub-01/ses-01/dwi/dwi.nii.gz dti.nii.gz \
 # Step 4: Calculate DTI Scalar Maps (FA, MD, RD, AD, RGB, EV)
 echo "Step 4: Calculating scalar maps (FA, MD, RD, AD, RGB, EV)..."
 # [MRtrix Version]
-tensor2metric dti.nii.gz -fa fa.nii.gz -adc md.nii.gz -rd rd.nii.gz -ad ad.nii.gz -vector rgb.nii.gz -mask b0_brain_mask.nii.gz
+tensor2metric dti.nii.gz \
+    -fa fa.nii.gz \
+    -adc md.nii.gz \
+    -rd rd.nii.gz \
+    -ad ad.nii.gz \
+    -vector rgb.nii.gz \
+    -evec ev.nii.gz \
+    -mask b0_brain_mask.nii.gz
 
 echo "Tutorial 2.4 complete. Inspect fa.nii.gz and rgb.nii.gz in mrview for quality control."

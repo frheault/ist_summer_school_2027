@@ -83,13 +83,11 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
     MPLCONFIGDIR=/tmp
 
-# Install runtime system packages
+# Install runtime system packages and Python 3.12
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    # Core system tools & parallel processing
-    ca-certificates wget curl unzip zip tar bzip2 bc dc gawk libgomp1 libquadmath0 \
+    software-properties-common ca-certificates wget curl unzip zip tar bzip2 bc dc gawk libgomp1 libquadmath0 \
     libglu1-mesa libxt6 libxmu6 libgl1 freeglut3-dev time tcsh parallel dcm2niix git sudo \
-    # Python 3 and build dependencies
-    python3.10 python3-pip python3-venv python3-dev python-is-python3 \
+    # Build & BLAS dependencies
     libblas-dev liblapack-dev libfreetype6-dev \
     # FSL runtime dependencies
     libfontconfig1 libice6 libsm6 libxcursor1 libxft2 libxinerama1 libxrandr2 libxrender1 libgtk2.0-0 \
@@ -97,6 +95,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libqt5opengl5 libqt5svg5 libqt5gui5 libqt5core5a libqt5widgets5 libfftw3-3 libtiff5 libpng16-16 \
     # Locales
     locales && \
+    add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt-get update && apt-get install -y --no-install-recommends \
+    python3.12 python3.12-venv python3.12-dev && \
     locale-gen en_US.UTF-8 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -114,10 +115,10 @@ COPY --from=builder_mrtrix3 /opt/mrtrix3 /opt/mrtrix3
 RUN wget -q --no-check-certificate -O /opt/freesurfer/.license "https://www.dropbox.com/s/zs4k3bcfxderj58/license.txt?dl=0" || \
     echo "academic_user@ist2027\n00000\n *XXXXXX*\n FSYYYYYY" > /opt/freesurfer/.license
 
-# Copy requirements and install in a dedicated virtualenv
+# Copy requirements and install in a dedicated virtualenv with Python 3.12
 COPY requirements.txt /tmp/requirements.txt
 ENV VIRTUAL_ENV=/opt/venv
-RUN python3 -m venv $VIRTUAL_ENV
+RUN python3.12 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 ENV SETUPTOOLS_USE_DISTUTILS=stdlib
 
