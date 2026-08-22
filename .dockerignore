@@ -1,10 +1,14 @@
 .git
+.docker_cache
 bids_data
 dicom_data
 nifti_data
 logs
+qbx_clusters
+tractometry_results
 *.nii.gz
-*.tck
+*.nii
 *.trk
+*.tck
 *.mif
 *.log

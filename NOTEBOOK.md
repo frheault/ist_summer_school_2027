@@ -18,7 +18,7 @@ The workshop utilizes an open-source neuroimaging stack:
 
 ### Running with Docker
 ```bash
-docker run -it --rm -p 8888:8888 -v /path/to/ist_summer_school_2027:/data -w /data ist_summer_school_2027
+docker run -it --rm --user $(id -u):$(id -g) -p 8888:8888 -v $(pwd):/data -w /data ist_summer_school_2027:latest
 ```
 
 ### Launching Interactive Notebooks

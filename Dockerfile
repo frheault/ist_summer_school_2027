@@ -1,11 +1,11 @@
 # ==============================================================================
-# Dockerfile for IST Summer School 2027 Diffusion MRI Workshop
+# Dockerfile for IST Summer School 2027 Diffusion MRI Workshop (Standalone)
 # Multi-stage container definition:
-#   Stage 1: FreeSurfer (with SynthSeg AI)
-#   Stage 2: FSL 6.0.7
-#   Stage 3: ANTs 2.5.0
-#   Stage 4: MRtrix3 3.0.8
-#   Stage 5: Unified Runtime (Ubuntu 24.04 + Native Python 3.12 + JupyterLab)
+#   Stage 1: FreeSurfer 7.4.1 (with SynthSeg AI, pruned)
+#   Stage 2: FSL 6.0.7 (pruned)
+#   Stage 3: ANTs 2.5.0 (pruned)
+#   Stage 4: MRtrix3 3.0.8 (built from source with Python 3.12 support)
+#   Stage 5: Unified Runtime (Ubuntu 24.04 + Native Python 3.12 + umask 000)
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -14,12 +14,20 @@
 FROM ubuntu:24.04 AS builder_freesurfer
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates tar && \
+    ca-certificates wget tar && \
     rm -rf /var/lib/apt/lists/*
 
-# Install FreeSurfer from cached local tarball
-COPY .docker_cache/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz /tmp/fs.tar.gz
-RUN tar zxf /tmp/fs.tar.gz --no-same-owner -C /opt/ && rm /tmp/fs.tar.gz
+# Download and extract FreeSurfer 7.4.1, pruning unused heavy assets
+RUN wget --no-check-certificate -qO- "https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/7.4.1/freesurfer-linux-ubuntu22_amd64-7.4.1.tar.gz" | tar zxv --no-same-owner -C /opt/ && \
+    rm -rf /opt/freesurfer/subjects \
+           /opt/freesurfer/average \
+           /opt/freesurfer/trctrain \
+           /opt/freesurfer/docs \
+           /opt/freesurfer/matlab \
+           /opt/freesurfer/fsfast \
+           /opt/freesurfer/fsafd \
+           /opt/freesurfer/mni \
+           /opt/freesurfer/mni-1.4
 
 # ------------------------------------------------------------------------------
 # --- Stage 2: FSL ---
@@ -27,17 +35,23 @@ RUN tar zxf /tmp/fs.tar.gz --no-same-owner -C /opt/ && rm /tmp/fs.tar.gz
 FROM ubuntu:24.04 AS builder_fsl
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates python3 bc dc file libfontconfig1 libfreetype6 \
+    ca-certificates wget python3 bc dc file libfontconfig1 libfreetype6 \
     libgl1-mesa-dev libglu1-mesa libgomp1 libice6 libxcursor1 libxft2 \
     libxinerama1 libxrandr2 libxrender1 libxt6 libquadmath0 \
     locales sudo bzip2 curl && \
     rm -rf /var/lib/apt/lists/*
 
-# Install FSL 6.0.7 using cached installer
-COPY .docker_cache/fslinstaller.py /tmp/fslinstaller.py
-RUN yes | python3 /tmp/fslinstaller.py -d /opt/fsl -V 6.0.7 -r -n && \
+# Install FSL 6.0.7 via official installer and clean unused caches/headers
+RUN wget https://fsl.fmrib.ox.ac.uk/fsldownloads/fslconda/releases/fslinstaller.py && \
+    yes | python3 fslinstaller.py -d /opt/fsl -V 6.0.7 -r -n && \
     ln -s /opt/fsl/bin/micromamba /opt/fsl/bin/conda && \
-    rm -f /tmp/fslinstaller.py
+    rm -f fslinstaller.py && \
+    rm -rf /opt/fsl/pkgs \
+           /opt/fsl/include \
+           /opt/fsl/src \
+           /opt/fsl/doc \
+           /opt/fsl/data/atlases \
+           /opt/fsl/data/standard/tissuepriors
 
 # ------------------------------------------------------------------------------
 # --- Stage 3: ANTs ---
@@ -45,14 +59,23 @@ RUN yes | python3 /tmp/fslinstaller.py -d /opt/fsl -V 6.0.7 -r -n && \
 FROM ubuntu:24.04 AS builder_ants
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates unzip && \
+    ca-certificates wget unzip && \
     rm -rf /var/lib/apt/lists/*
 
-# Install ANTs 2.5.0 from cached zip
-COPY .docker_cache/ants-2.5.0-ubuntu-22.04-X64-gcc.zip /tmp/ants.zip
-RUN unzip /tmp/ants.zip -d /opt/ && \
+# Install ANTs 2.5.0 and prune non-registration executables
+RUN wget https://github.com/ANTsX/ANTs/releases/download/v2.5.0/ants-2.5.0-ubuntu-22.04-X64-gcc.zip && \
+    unzip ants-2.5.0-ubuntu-22.04-X64-gcc.zip -d /opt/ && \
     mv /opt/ants-2.5.0 /opt/ants && \
-    rm -f /tmp/ants.zip
+    rm -f ants-2.5.0-ubuntu-22.04-X64-gcc.zip && \
+    mkdir -p /opt/ants_clean/bin /opt/ants_clean/lib && \
+    cp -P /opt/ants/lib/* /opt/ants_clean/lib/ 2>/dev/null || true && \
+    for bin in antsRegistration antsRegistrationSyN.sh antsRegistrationSyNQuick.sh \
+               antsApplyTransforms antsApplyTransformsToPoints N4BiasFieldCorrection \
+               ImageMath ThresholdImage antsSliceRegularizedRegistration; do \
+        [ -e "/opt/ants/bin/$bin" ] && cp -P "/opt/ants/bin/$bin" /opt/ants_clean/bin/; \
+    done && \
+    rm -rf /opt/ants && \
+    mv /opt/ants_clean /opt/ants
 
 # ------------------------------------------------------------------------------
 # --- Stage 4: MRtrix3 ---
@@ -65,12 +88,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libtiff-dev libpng-dev ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
-# Build MRtrix3 (3.0.8 or master) from source
+# Build MRtrix3 3.0.8 from source
 RUN git clone https://github.com/MRtrix3/mrtrix3.git /opt/mrtrix3 && \
     cd /opt/mrtrix3 && \
     (git checkout 3.0.8 || git checkout 3.0_RC3 || true) && \
     ./configure && \
-    ./build
+    ./build && \
+    rm -rf /opt/mrtrix3/tmp
 
 # ------------------------------------------------------------------------------
 # --- Stage 5: Unified Runtime ---
@@ -113,7 +137,7 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
     pip install --no-cache-dir -r /tmp/requirements.txt && \
     rm /tmp/requirements.txt
 
-# Copy software binaries from builder stages
+# Copy minified software binaries from builder stages
 COPY --from=builder_freesurfer /opt/freesurfer /opt/freesurfer
 COPY --from=builder_fsl /opt/fsl /opt/fsl
 COPY --from=builder_ants /opt/ants /opt/ants
@@ -142,8 +166,10 @@ ENV FREESURFER_HOME=/opt/freesurfer \
 # Expose JupyterLab default port
 EXPOSE 8888
 
-# Automatic environment activation for interactive bash sessions
+# Automatic environment activation & umask 000 (fully unlocked files)
 RUN echo "# --- IST Summer School 2027 Environment Setup ---" >> /etc/bash.bashrc && \
+    echo "umask 000" >> /etc/bash.bashrc && \
+    echo "umask 000" >> /etc/profile && \
     echo "source /opt/venv/bin/activate" >> /etc/bash.bashrc && \
     echo "export FREESURFER_HOME=/opt/freesurfer" >> /etc/bash.bashrc && \
     echo "export FS_LICENSE=/opt/freesurfer/.license" >> /etc/bash.bashrc && \
