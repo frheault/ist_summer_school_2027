@@ -13,6 +13,7 @@ find . -maxdepth 1 \
     -not -name "requirements.txt" \
     -not -name "launch_jupyter.sh" \
     -not -name "NOTEBOOK.md" \
+    -not -name "REPORT.md" \
     -not -name "*CURRICULUM*" \
     -not -name "*curriculum*" \
     -not -name "README.md" \
