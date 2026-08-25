@@ -28,7 +28,7 @@ This repository contains the hands-on tutorial scripts, sample data, and compani
 The workshop covers practical diffusion MRI processing and analysis across five days:
 
 1. **Day 1 — Foundations & Registration**: dMRI physics, BIDS structure, rigid/affine multimodal registration (ANTs/FLIRT), and automated anatomical parcellation (SynthSeg).
-2. **Day 2 — QA & DTI Tractography**: Raw data inspection, tensor fitting, scalar maps ($FA, MD, RD, AD$), DEC-FA maps, and deterministic tracking of the Corpus Callosum.
+2. **Day 2 — QA & DTI Tractography**: Raw data inspection, tensor fitting, scalar maps (FA, MD, RD, AD), DEC-FA maps, and deterministic tracking of the Corpus Callosum.
 3. **Day 3 — Microstructure & CSD**: Multi-compartment models (NODDI, DKI), Fixel-Based Analysis (FBA / `fod2fixel`), MSMT-CSD, and probabilistic tractography (`iFOD2`).
 4. **Day 4 — Pipelines & Tractometry**: Automated preprocessing pipelines (TractoFlow/QSIPrep), bundle dissection, and along-tract microstructural profiling with Scilpy.
 5. **Day 5 — Clustering & Connectomics**: QuickBundles streamline clustering, SIFT2 filtering, structural connectomes, and graph theory analysis with NetworkX.
@@ -86,10 +86,10 @@ xhost +local:root
 
 # Run container
 docker run -it --rm \
-  -v "$(pwd)":/data \
+  -v "(pwd)":/data \
   -w /data \
   -p 8888:8888 \
-  -e DISPLAY=$DISPLAY \
+  -e DISPLAY=DISPLAY \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   --ipc=host \
   frheault/ist_summer_school_2027
@@ -100,7 +100,7 @@ docker run -it --rm \
 ```bash
 xhost + 127.0.0.1
 docker run -it --rm \
-  -v "$(pwd)":/data \
+  -v "(pwd)":/data \
   -w /data \
   -p 8888:8888 \
   -e DISPLAY=host.docker.internal:0 \
@@ -112,10 +112,10 @@ docker run -it --rm \
 
 ```bash
 docker run -it --rm \
-  -v "$(pwd)":/data \
+  -v "(pwd)":/data \
   -w /data \
   -p 8888:8888 \
-  -e DISPLAY=$DISPLAY \
+  -e DISPLAY=DISPLAY \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   --ipc=host \
   frheault/ist_summer_school_2027
@@ -148,12 +148,12 @@ pip install -r requirements.txt
 3. **Configure Environment Variables** (add to `~/.bashrc`):
 ```bash
 export FREESURFER_HOME=/opt/freesurfer
-[ -f "$FREESURFER_HOME/SetUpFreeSurfer.sh" ] && . "$FREESURFER_HOME/SetUpFreeSurfer.sh"
+[ -f "FREESURFER_HOME/SetUpFreeSurfer.sh" ] && . "FREESURFER_HOME/SetUpFreeSurfer.sh"
 export FSLDIR=/opt/fsl
-[ -f "$FSLDIR/etc/fslconf/fsl.sh" ] && . "$FSLDIR/etc/fslconf/fsl.sh"
+[ -f "FSLDIR/etc/fslconf/fsl.sh" ] && . "FSLDIR/etc/fslconf/fsl.sh"
 export ANTSPATH=/opt/ants/bin/
 export MRTRIX3_HOME=/opt/mrtrix3
-export PATH="$ANTSPATH:$MRTRIX3_HOME/bin:$PATH"
+export PATH="ANTSPATH:MRTRIX3_HOME/bin:PATH"
 ```
 
 ---
@@ -166,9 +166,16 @@ Download the [verification script](https://gist.github.com/frheault/edd658afaa37
 Mount the directory containing the verification script and execute the container directly:
 
 ```bash
-docker run --rm \
+docker run --rm -it\
   -v "/path/to/verification/script":/summer_school \
   frheault/ist_summer_school_2027 bash /summer_school/check_installation.sh
+```
+
+You can then execute the various tutorials by doing:
+```bash
+cd /summer_school
+ls -l # Validate the folder is full
+bash tutorial_1.0_setup_data.sh # First step
 ```
 
 *(Make sure `/path/to/verification/script` points to the folder where you downloaded `check_installation.sh`)*.
@@ -191,47 +198,39 @@ The workshop dataset is packaged in `dicom_filtered_sub01.zip` (~65 MB). It cont
 
 1. **Multi-Shell Diffusion-Weighted Imaging (DWI)**:
 * **Sequence**: Spin-Echo EPI, Single-Shot, AP phase encoding.
-* **Matrix Size**: $110 \times 110 \times 70$ slices.
-* **Isotropic Resolution**: $2.0 \times 2.0 \times 2.0\text{ mm}^3$.
-* **TR / TE**: $8500\text{ ms} / 85\text{ ms}$.
+* **Matrix Size**: 110 * 110 * 70 slices.
+* **Isotropic Resolution**: 2.0 * 2.0 * 2.0 mm^3.
+* **TR / TE**: 8500 ms / 85 ms.
 * **Gradient Scheme**: 96 volumes total:
-* $b = 0\text{ s/mm}^2$ ($6$ non-diffusion baseline volumes)
-* $b = 1000\text{ s/mm}^2$ ($30$ uniformly distributed directions)
-* $b = 2000\text{ s/mm}^2$ ($60$ uniformly distributed directions)
+* b = 0 s/mm^2 (6 non-diffusion baseline volumes)
+* b = 1000 s/mm^2 (30 uniformly distributed directions)
+* b = 2000 s/mm^2 (60 uniformly distributed directions)
 
 2. **High-Resolution Anatomical Structural Image (T1w)**:
-* **Sequence**: 3D MPRAGE $T_1$-weighted.
-* **Resolution**: $1.0\text{ mm}^3$ isotropic ($192$ sagittal slices).
+* **Sequence**: 3D MPRAGE T_1-weighted.
+* **Resolution**: 1.0 mm^3 isotropic (192 sagittal slices).
 
 3. **Reference Templates (`template/`)**:
-* `template/mni_masked.nii.gz`: Skull-stripped MNI152 $1\text{ mm}$ anatomical template.
+* `template/mni_masked.nii.gz`: Skull-stripped MNI152 1 mm anatomical template.
 * `template/mni_synthseg.nii.gz`: A precomputed WM/GM parcellation from FreeSurfer SynthSeg.
 * `template/cc.nii.gz`: Corpus Callosum MNI152 anatomical binary mask.
 * `template/FreeSurferColorLUT.txt`: FreeSurfer anatomical color and label lookup table.
 * `template/MrtrixLUT.txt`: MRtrix3 structural connectome integer label lookup table.
 
-
-
-
-
 ---
 
 ## Interactive Jupyter Notebooks
-
-
 
 For interactive Python-based exploration, visualization, and statistical modeling, launch Jupyter Lab with the helper script:
 
 ```bash
 ./launch_jupyter.sh
-
 ```
 
 Or manually:
 
 ```bash
 jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
-
 ```
 
 Access the Jupyter server by opening `http://localhost:8888` in your host browser.
@@ -239,42 +238,20 @@ Access the Jupyter server by opening `http://localhost:8888` in your host browse
 ### Available Notebooks in `notebooks/`:
 
 * **`notebooks/Day3_Microstructure_NODDI_DKI.ipynb`**: Interactive fitting and visualization of AMICO NODDI and DIPY DKI models, voxel-wise parameter slicing, and comparison with tensor metrics in crossing fiber regions.
-
-
 * **`notebooks/Day4_Tractometry_Profiling.ipynb`**: Loading along-tract JSON profile deliverables, plotting along-tract FA/MD/NDI profiles with confidence ribbons across bundles, and running statistical tests.
-
-
 * **`notebooks/Day5_Connectomics_Graph_Theory.ipynb`**: Structural connectome visualization (raw vs. SIFT2 matrices), hub node identification, and graph-theoretical network analysis with NetworkX.
-
-
 
 ---
 
 ## References & Citations
 
-
-
 If you use this repository, tutorial code, or tools in your research, please ``` the corresponding packages:
 
 1. **MRtrix3**: Tournier, J.-D., et al. (2019). MRtrix3: A fast, flexible and open-source software framework for multi-modal diffusion MRI. *NeuroImage*, 202, 116137.
-
-
 2. **Scilpy**: The SCIL tractography and diffusion processing suite, Université de Sherbrooke. [https://github.com/scilus/scilpy](https://github.com/scilus/scilpy).
-
-
 3. **SynthSeg**: Billot, B., et al. (2023). Robust machine learning segmentation for large-scale neuroimaging. *Medical Image Analysis*, 86, 102789.
-
-
 4. **AMICO (NODDI)**: Daducci, A., et al. (2015). Accelerated Microstructure Imaging via Convex Optimization (AMICO) for NODDI. *NeuroImage*, 105, 32–44.
-
-
 5. **DIPY**: Garyfallidis, E., et al. (2014). DIPY, a library for the analysis of diffusion MRI data. *Frontiers in Neuroinformatics*, 8, 8.
-
-
 6. **ANTs**: Avants, B. B., et al. (2011). An open source software framework for image registration with Advanced Normalization Tools (ANTs). *Insight Journal*, 2, 1–35.
-
-
 7. **FSL**: Jenkinson, M., et al. (2012). FSL. *NeuroImage*, 62(2), 782–790.
-
-
 8. **pyAFQ**: Kruper, J., et al. (2021). Evaluating the reproducibility of automated tractometry across datasets and pipelines. *NeuroImage*, 245, 118749.
