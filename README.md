@@ -78,16 +78,13 @@ docker pull frheault/ist_summer_school_2027
 
 Run the container with your current workspace mounted to `/data`, interactive shell, Jupyter port binding (`8888`), and X11 forwarding for visual tools (`MRView`, `MI-Brain`, `freeview`):
 
-**On Linux**:
+**On Linux (or WSL)**:
 
 ```bash
-# Allow local X11 connections
 xhost +local:root
-
-# Run container
 docker run -it --rm \
-  -v "(pwd)":/data \
-  -w /data \
+  -v "${PWD}":/summer_school \
+  -w /summer_school \
   -p 8888:8888 \
   -e DISPLAY=DISPLAY \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
@@ -100,23 +97,10 @@ docker run -it --rm \
 ```bash
 xhost + 127.0.0.1
 docker run -it --rm \
-  -v "(pwd)":/data \
-  -w /data \
+  -v "${PWD}":/summer_school \
+  -w /summer_school \
   -p 8888:8888 \
   -e DISPLAY=host.docker.internal:0 \
-  --ipc=host \
-  frheault/ist_summer_school_2027
-```
-
-**On Windows (WSL)**:
-
-```bash
-docker run -it --rm \
-  -v "(pwd)":/data \
-  -w /data \
-  -p 8888:8888 \
-  -e DISPLAY=DISPLAY \
-  -v /tmp/.X11-unix:/tmp/.X11-unix \
   --ipc=host \
   frheault/ist_summer_school_2027
 ```
@@ -148,9 +132,9 @@ pip install -r requirements.txt
 3. **Configure Environment Variables** (add to `~/.bashrc`):
 ```bash
 export FREESURFER_HOME=/opt/freesurfer
-[ -f "FREESURFER_HOME/SetUpFreeSurfer.sh" ] && . "FREESURFER_HOME/SetUpFreeSurfer.sh"
+. "FREESURFER_HOME/SetUpFreeSurfer.sh"
 export FSLDIR=/opt/fsl
-[ -f "FSLDIR/etc/fslconf/fsl.sh" ] && . "FSLDIR/etc/fslconf/fsl.sh"
+. "FSLDIR/etc/fslconf/fsl.sh"
 export ANTSPATH=/opt/ants/bin/
 export MRTRIX3_HOME=/opt/mrtrix3
 export PATH="ANTSPATH:MRTRIX3_HOME/bin:PATH"
@@ -159,31 +143,17 @@ export PATH="ANTSPATH:MRTRIX3_HOME/bin:PATH"
 ---
 
 ### Environment Verification
-
-Download the [verification script](https://gist.github.com/frheault/edd658afaa37689bddcc6e40287a5e0c) (`check_installation.sh`) to verify software suites and Python packages.
-
+First, you need to naviguate to the folder containing the various scripts and data (e.g., `cd ~/code/ist_summer_school_2027/` or `cd /mnt/c/Users/[YourUser]/code/ist_summer_school_2027` on Windows WSL).
 **If using the Megadocker:**
-Mount the directory containing the verification script and execute the container directly:
+Then, mount the directory containing the verification script and execute the container directly:
 
 ```bash
-docker run --rm -it\
-  -v "/path/to/verification/script":/summer_school \
-  frheault/ist_summer_school_2027 bash /summer_school/check_installation.sh
+docker run --rm -it \
+  -v "${PWD}":/summer_school \
+  frheault/ist_summer_school_2027 bash ./check_installation.sh
 ```
-
-You can then execute the various tutorials by doing:
-```bash
-cd /summer_school
-ls -l # Validate the folder is full
-bash tutorial_1.0_setup_data.sh # First step
-```
-
-*(Make sure `/path/to/verification/script` points to the folder where you downloaded `check_installation.sh`)*.
 
 **If using a Manual Installation:**
-1. Open your terminal (or WSL terminal on Windows).
-2. Navigate to your download directory (e.g., `cd ~/Downloads` or `cd /mnt/c/Users/[YourUser]/Downloads` on Windows WSL).
-3. Run the diagnostic checker:
 ```bash
 bash check_installation.sh
 ```
