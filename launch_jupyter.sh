@@ -3,7 +3,7 @@
 # IST Summer School 2027 - Launch JupyterLab Server
 #
 # Usage (Inside Docker container with port forwarding):
-#   docker run -it --rm -p 8888:8888 -v $(pwd):/data ist_summer_school_2027:latest ./launch_jupyter.sh
+#   docker run -it --rm -p 8888:8888 -v "${PWD}":/summer_school -w /summer_school frheault/ist_summer_school_2027 ./launch_jupyter.sh
 #
 # Usage (Local workstation):
 #   ./launch_jupyter.sh [PORT]

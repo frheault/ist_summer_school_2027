@@ -3,6 +3,7 @@ bids_data/
 dicom_data/
 nifti_data/
 NODDI_results/
+freewater_results/
 fixel_dir/
 bundleseg_automated/
 zenodo_scil_atlas/
@@ -33,6 +34,16 @@ wm.txt
 gm.txt
 csf.txt
 sift2_weights.txt
+sift2_mu.txt
+frf_ssst*.txt
+para_diff.txt
+iso_diff.txt
+*.bval
+*.bvec
+*.scheme
+atlas_to_subj_*
+t1_to_b0_*
+your_data_*
 
 # Python environments, checkpoints & caches
 venv/
@@ -41,3 +52,6 @@ venv/
 __pycache__/
 .ipynb_checkpoints/
 *.tmp
+trackA_*
+
+!precomputed/t1_synthseg.nii.gz

@@ -12,3 +12,5 @@ tractometry_results
 *.tck
 *.mif
 *.log
+
+!precomputed/t1_synthseg.nii.gz

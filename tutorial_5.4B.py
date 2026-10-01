@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-dMRI Summer School - Tutorial 5.2
+dMRI Summer School - Tutorial 5.4, Track B (called by tutorial_5.4B.sh)
 Theme: Quantitative Structural Connectomics & Graph Theory
 Goal: Analyze structural connectome matrices with NetworkX.
 """
@@ -12,7 +12,7 @@ import networkx as nx
 csv_file = "connectome_sift2.csv" if os.path.exists("connectome_sift2.csv") else "connectome.csv"
 
 if not os.path.exists(csv_file):
-    print(f"[ERROR] Connectome matrix '{csv_file}' not found. Please run tutorial_5.4_capstone_analysis.sh first.")
+    print(f"[ERROR] Connectome matrix '{csv_file}' not found. Please run tutorial_5.4B.sh first.")
     exit(1)
 
 print(f"Loading connectome matrix: {csv_file}...")
@@ -24,14 +24,14 @@ G = nx.from_numpy_array(matrix)
 
 # Compute core graph theory metrics
 density = nx.density(G)
-global_eff = nx.global_efficiency(G)
+global_eff = nx.global_efficiency(G)  # NOTE: NetworkX ignores weights here (binary graph)
 avg_clustering = nx.average_clustering(G, weight="weight")
 
 print("\n--- Structural Connectome Network Metrics ---")
 print(f"  Total Nodes             : {G.number_of_nodes()}")
 print(f"  Total Edges             : {G.number_of_edges()}")
 print(f"  Graph Density           : {density:.4f}")
-print(f"  Global Efficiency       : {global_eff:.4f}")
+print(f"  Global Efficiency (bin) : {global_eff:.4f}")
 print(f"  Weighted Avg Clustering : {avg_clustering:.4f}")
 
 # Load anatomical node names from LUT if available
@@ -54,4 +54,4 @@ for node, str_val in top_hubs:
     label_str = f" ({lut_names[node]})" if node in lut_names else ""
     print(f"  Node {node:02d}{label_str}: Strength = {str_val:.2f}")
 
-print("\nTutorial 5.2 complete.")
+print("\nGraph analysis complete.")

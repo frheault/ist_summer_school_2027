@@ -6,6 +6,7 @@
 #   Stage 3: ANTs 2.5.0 (pruned)
 #   Stage 4: MRtrix3 3.0.8 (built from source with Python 3.12 support)
 #   Stage 5: Unified Runtime (Ubuntu 24.04 + Native Python 3.12 + umask 000)
+#   + /opt/ist2027/precomputed (precomputed SynthSeg of the workshop T1)
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -71,7 +72,7 @@ RUN wget https://github.com/ANTsX/ANTs/releases/download/v2.5.0/ants-2.5.0-ubunt
     cp -P /opt/ants/lib/* /opt/ants_clean/lib/ 2>/dev/null || true && \
     for bin in antsRegistration antsRegistrationSyN.sh antsRegistrationSyNQuick.sh \
                antsApplyTransforms antsApplyTransformsToPoints N4BiasFieldCorrection \
-               ImageMath ThresholdImage antsSliceRegularizedRegistration; do \
+               ImageMath ThresholdImage antsSliceRegularizedRegistration PrintHeader; do \
         [ -e "/opt/ants/bin/$bin" ] && cp -P "/opt/ants/bin/$bin" /opt/ants_clean/bin/; \
     done && \
     rm -rf /opt/ants && \
@@ -142,6 +143,12 @@ COPY --from=builder_freesurfer /opt/freesurfer /opt/freesurfer
 COPY --from=builder_fsl /opt/fsl /opt/fsl
 COPY --from=builder_ants /opt/ants /opt/ants
 COPY --from=builder_mrtrix3 /opt/mrtrix3 /opt/mrtrix3
+
+# Precomputed SynthSeg of the workshop T1 (mri_synthseg needs ~15 GB RAM).
+# Participants copy it manually if SynthSeg crashes (see tutorial_1.6, Step 3).
+# Lives outside /summer_school so the repository bind-mount does not hide it.
+COPY precomputed/ /opt/ist2027/precomputed/
+RUN chmod -R a+rX /opt/ist2027/precomputed
 
 # Set up FreeSurfer license
 RUN wget -q --no-check-certificate -O /opt/freesurfer/.license "https://www.dropbox.com/s/zs4k3bcfxderj58/license.txt?dl=0" || \

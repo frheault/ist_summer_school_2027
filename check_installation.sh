@@ -49,6 +49,8 @@ check_cmd "mri_synthseg" "FreeSurfer SynthSeg"
 echo -e "\n--- Scilpy Tools ---" | tee -a "$LOG_FILE"
 check_cmd "scil_header_print_info" "Scilpy header info"
 check_cmd "scil_NODDI_maps" "Scilpy NODDI fitting"
+check_cmd "scil_freewater_priors" "Scilpy Free Water priors"
+check_cmd "scil_freewater_maps" "Scilpy Free Water maps"
 check_cmd "scil_tractogram_segment_with_bundleseg" "Scilpy BundleSeg"
 check_cmd "scil_tractogram_qbx" "Scilpy QuickBundlesX"
 check_cmd "scil_bundle_compute_centroid" "Scilpy Bundle Centroids"
@@ -67,6 +69,12 @@ echo -e "\n--- System Utilities ---" | tee -a "$LOG_FILE"
 check_cmd "dcm2niix" "dcm2niix"
 check_cmd "unzip" "unzip"
 check_cmd "curl" "curl"
+printf "Checking for %-35s ... " "precomputed SynthSeg (fallback)" | tee -a "$LOG_FILE"
+if [ -f /opt/ist2027/precomputed/t1_synthseg.nii.gz ] || [ -f precomputed/t1_synthseg.nii.gz ]; then
+    echo "Found" | tee -a "$LOG_FILE"
+else
+    echo "NOT FOUND (only needed if mri_synthseg crashes)" | tee -a "$LOG_FILE"
+fi
 
 echo "=================================================" | tee -a "$LOG_FILE"
 if [ "$ERRORS" -eq 0 ]; then

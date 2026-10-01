@@ -14,6 +14,8 @@
 #   - bids_data/sub-01/ses-01/anat/ (t1.nii.gz)
 # ======================================================================
 
+set -e
+
 echo "Step 1: Unzipping raw DICOM data..."
 unzip -q -o dicom_filtered_sub01.zip
 chmod -R u+rwx dicom_data

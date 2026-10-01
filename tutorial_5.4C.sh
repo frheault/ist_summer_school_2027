@@ -2,7 +2,7 @@
 # For pedagogical context, notes, and tips, refer to NOTEBOOK.md.
 #
 # ======================================================================
-# dMRI Summer School - Tutorial 5.1 (Our Data)
+# dMRI Summer School - Tutorial 5.4, Track C (Build your analysis: Clusters)
 #
 # Theme: Tractography Clustering with QuickBundlesX (Scilpy)
 #
@@ -12,8 +12,8 @@
 #       in MI-Brain.
 #
 # Inputs:
-#   - wb_250k.tck (Whole-brain tractogram from Tutorial 4.3)
-#   - fa.nii.gz   (used as spatial reference)
+#   - wb_100k.tck (Whole-brain tractogram from Tutorial 4.2)
+#   - fa.nii.gz   (used as spatial reference, from Tutorial 2.3)
 #
 # Outputs:
 #   - qbx_clusters/              (One .trk file per cluster)
@@ -21,6 +21,8 @@
 #   - qbx_biggest_cluster_shape.json
 #
 # ======================================================================
+
+set -e
 
 # -----------------------------------------------------------------------
 # PEDAGOGICAL NOTE — Distance threshold:
@@ -30,13 +32,13 @@
 #   Typical values for whole-brain data: 10–20 mm.
 #
 #   Try re-running this script with different DIST_THRESH values and
-#   observe how the cluster count and shapes change:
-#     DIST_THRESH=10   → fine-grained (~hundreds of clusters)
-#     DIST_THRESH=15   → balanced clustering (default here)
-#     DIST_THRESH=20   → coarse clustering (~tens of clusters)
-#     DIST_THRESH=30   → very coarse, large anatomical bundles grouped
+#   observe how the cluster count and shapes change (counts measured on
+#   the workshop wb_100k.tck):
+#     DIST_THRESH=10   → fine-grained (~2700 clusters)
+#     DIST_THRESH=15   → balanced clustering (default here, ~700 clusters)
+#     DIST_THRESH=20   → coarse clustering (~190 clusters)
 DIST_THRESH=15
-INPUT_TCK="wb_250k.tck"
+INPUT_TCK="wb_100k.tck"
 REF_IMG="fa.nii.gz"
 
 echo "Using tractogram  : ${INPUT_TCK}"
@@ -135,7 +137,7 @@ echo "======================================================================="
 echo " EXPERIMENT: Vary the distance threshold"
 echo "======================================================================="
 echo ""
-echo "  Edit the DIST_THRESH variable at the top of this script and re-run:"
+echo "  Re-run with another threshold, e.g. change DIST_THRESH=20 and run: bash tutorial_5.4C.sh"
 echo ""
 echo "    DIST_THRESH=10  → finer clustering  (more, smaller clusters)"
 echo "    DIST_THRESH=20  → coarser clustering (fewer, larger clusters)"
@@ -145,4 +147,4 @@ echo "  Observe in MI-Brain how bundles split or merge as you change the"
 echo "  threshold. This directly illustrates the scale-dependence of"
 echo "  unsupervised tractography clustering."
 echo ""
-echo "Tutorial 5.1 complete."
+echo "Tutorial 5.4 (Track C) complete."

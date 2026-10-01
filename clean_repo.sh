@@ -14,9 +14,13 @@ find . -maxdepth 1 \
     -not -name "launch_jupyter.sh" \
     -not -name "NOTEBOOK.md" \
     -not -name "REPORT.md" \
+    -not -name "PLAN.md" \
+    -not -name "SUGGESTION.md" \
+    -not -name "precomputed" \
     -not -name "*CURRICULUM*" \
     -not -name "*curriculum*" \
     -not -name "README.md" \
+    -not -name "COMMANDS.md" \
     -not -name "*schedule*" \
     -not -name "*.xlsx" \
     -not -name "clean_repo.sh" \
