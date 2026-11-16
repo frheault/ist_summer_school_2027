@@ -20,7 +20,6 @@ find . -maxdepth 1 \
     -not -name "*CURRICULUM*" \
     -not -name "*curriculum*" \
     -not -name "README.md" \
-    -not -name "COMMANDS.md" \
     -not -name "*schedule*" \
     -not -name "*.xlsx" \
     -not -name "clean_repo.sh" \

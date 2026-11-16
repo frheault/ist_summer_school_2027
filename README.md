@@ -1,6 +1,6 @@
 # IST Summer School 2027: Tractography Workshop
 
-This repository contains the hands-on tutorial scripts, sample data, and companion study guide ([NOTEBOOK.md](NOTEBOOK.md)) for the 5-day workshop. It covers diffusion MRI from physics and data quality control to microstructure, tractography, tractometry, and structural connectomics.
+This repository contains the hands-on tutorial scripts, sample dataset, and companion study guide ([NOTEBOOK.md](NOTEBOOK.md)) for the 5-day workshop. It covers diffusion MRI from data quality control to microstructure modeling, tractography, tractometry, and structural connectomics.
 
 ---
 
@@ -19,29 +19,29 @@ This repository contains the hands-on tutorial scripts, sample data, and compani
 
 ## Workshop Overview
 
-1. **Day 1: Foundations & setup.** Motivation, dMRI physics, connectional anatomy, installation, data representations and transformations, registration and SynthSeg segmentation.
-2. **Day 2: From raw DWI to tracts.** Preprocessing and modeling overview, QA and DTI (our data and your data), introduction to tractography, deterministic DTI tracking of the corpus callosum.
-3. **Day 3: Microstructure, fixels & advanced tractography.** NODDI, DKI, and Free Water elimination, fixel-based analysis, CSD, deterministic vs. probabilistic tracking.
-4. **Day 4: Bundle segmentation, tractometry & clustering.** ROI-based and automated (BundleSeg) segmentation, along-tract profiling, streamline clustering.
-5. **Day 5: Validation, connectomics & interpretation.** Validation, connectomics, study design, and a "build your analysis" session (Track A tractometry, Track B connectomics, Track C clustering).
+1. **Day 1: Foundations & setup.** Motivation, dMRI physics, connectional anatomy, installation check, data representations and transformations, registration, and SynthSeg segmentation.
+2. **Day 2: From raw DWI to tracts.** Preprocessing and modeling overview, quality assurance and DTI fitting (our data and your data), introduction to tractography, and deterministic DTI tracking of the corpus callosum.
+3. **Day 3: Microstructure, fixels & advanced tractography.** NODDI, DKI, and Free Water elimination, fixel-based analysis, CSD theory, and deterministic vs. probabilistic CSD tracking.
+4. **Day 4: Bundle segmentation, tractometry & clustering.** ROI-based and automated (BundleSeg) bundle segmentation, along-tract profiling, and streamline clustering.
+5. **Day 5: Validation, connectomics & interpretation.** Tractography validation, structural connectomics, study design, and a "build your analysis" lab (Track A tractometry, Track B connectomics, Track C clustering).
 
 ---
 
 ## Hands-on Scripts
 
-Run the scripts from the repository root, in this order. Each script stops at the first error.
+Run the scripts from the repository root in the order below. Each script stops at the first error (`set -e`).
 
 | Session | Script | Main outputs |
 |---|---|---|
 | 1.4 | `check_installation.sh`, `tutorial_1.0_setup_data.sh` | `bids_data/` |
 | 1.6 | `tutorial_1.6_registration_segmentation.sh` | `b0_brain_mask`, `t1_to_b0`, `synthseg_in_dwi`, `cc_roi` |
-| 2.3 | `tutorial_2.3_qa_our_data.sh` | `fa`, `md`, `rgb`, `ev` |
+| 2.3 | `tutorial_2.3_qa_our_data.sh` | `fa`, `md`, `rd`, `ad`, `rgb`, `ev` |
 | 2.5 | `tutorial_2.5_qa_your_data.sh` | `your_data_*` |
-| 2.6 | `tutorial_2.6_det_tractography.sh` | `dti_det_cc_10k.tck` |
+| 2.6 | `tutorial_2.6_det_tractography.sh` | `fa_thr.nii.gz`, `dti_det_cc_10k.tck` |
 | 3.3 | `tutorial_3.3_microstructure_our_data.sh` | `NDI`, `ODI`, `ISOVF`, `dki_mk`, `fw` |
 | 3.4 | `tutorial_3.4_fixels_our_data.sh` | `wmfod`, `fixel_dir/`, `nufo` |
 | 3.5 | `tutorial_3.5_microstructure_fixels_your_data.sh` | `your_data_*` |
-| 3.7 | `tutorial_3.7_csd_tractography_our_data.sh` (scilpy alternative commented inside) | `csd_det_cc_10k`, `csd_prob_cc_10k` |
+| 3.7 | `tutorial_3.7_csd_tractography_our_data.sh` (Scilpy alternative commented inside) | `csd_det_cc_10k.tck`, `csd_prob_cc_10k.tck` |
 | 4.2 | `tutorial_4.2_bundle_segmentation_our_data.sh` | `wb_100k.tck`, `CC_bundle`, `CST_L`, `bundleseg_automated/` |
 | 4.2 (opt.) | `tutorial_4.2_optional_act.sh` | `wb_100k_act.tck` (comparison only) |
 | 4.3 | `tutorial_4.3_bundle_segmentation_your_data.sh` | `your_data_*` |
@@ -50,20 +50,18 @@ Run the scripts from the repository root, in this order. Each script stops at th
 | 5.4 B | `tutorial_5.4B.sh` (calls `tutorial_5.4B.py`) | `connectome_sift2.csv` |
 | 5.4 C | `tutorial_5.4C.sh` | `qbx_clusters/` |
 
-"Your data" scripts have plain variable assignments at the top of each file (e.g., `YOUR_DWI="YOUR_DWI.nii.gz"`). Simply edit the paths directly in the script to point to your files.
-
-Every command used in the scripts is also listed by topic in [COMMANDS.md](COMMANDS.md), the consolidated command reference.
+"Your data" scripts start with simple variable assignments at the top of the file (for example, `YOUR_DWI="YOUR_DWI.nii.gz"`). Edit those lines directly in the script to point to your files.
 
 ---
 
 ## Software & System Requirements
 
-Participants are expected to bring their own laptops.
+Participants bring their own laptops.
 
 * **Operating System**: Linux, macOS (via Docker), or Windows 10/11 with [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install).
-* **CPU**: 64-bit x86_64, 4+ cores recommended. All scripts are capped at 4 threads.
-* **RAM**: 16 GB minimum. FreeSurfer SynthSeg peaks at **~15 GB**; everything else stays under ~2 GB (NODDI). On macOS/Windows, raise the Docker Desktop memory limit (Settings > Resources). If SynthSeg is killed, follow the comment in `tutorial_1.6_registration_segmentation.sh` (Step 3) to copy the precomputed segmentation from `/opt/ist2027/precomputed/`.
-* **Disk Space**: 25–30 GB free (the Docker image is about 22 GB; all derivatives about 1.5 GB).
+* **CPU**: 64-bit x86_64, 4+ cores recommended. Thread counts are capped at 4.
+* **RAM**: 16 GB minimum. FreeSurfer SynthSeg peaks at **~15 GB**; all other steps stay under ~2 GB (NODDI). On macOS/Windows, raise the Docker Desktop memory limit (Settings > Resources). If SynthSeg stops with an error, follow the comment in `tutorial_1.6_registration_segmentation.sh` (Step 3) to copy the precomputed segmentation from `/opt/ist2027/precomputed/`.
+* **Disk Space**: 25–30 GB free (the Docker image is ~22 GB; all generated outputs use ~1.5 GB).
 
 ### Software Stack (Docker image)
 
@@ -81,7 +79,7 @@ Participants are expected to bring their own laptops.
 
 ### Option A: Docker (Recommended)
 
-This option gives every participant the same pre-configured software stack on any operating system, with no local dependency conflicts.
+Docker provides an identical, pre-configured Linux software stack on any operating system.
 
 Install [Docker](https://docs.docker.com/get-docker/), then pull the image:
 
@@ -89,9 +87,9 @@ Install [Docker](https://docs.docker.com/get-docker/), then pull the image:
 docker pull frheault/ist_summer_school_2027
 ```
 
-*(Alternatively, build locally with `docker build -t frheault/ist_summer_school_2027 .`)*
+*(Or build locally with `docker build -t frheault/ist_summer_school_2027 .`)*
 
-Launch the container from the repository folder. The command mounts the folder as `/summer_school`, forwards the Jupyter port (`8888`), and enables X11 so the viewers (`mrview`, `freeview`) can open windows.
+Start the container from the repository folder. The command mounts the folder at `/summer_school`, forwards the Jupyter port (`8888`), and enables X11 display forwarding for `mrview` and `freeview`.
 
 **On Linux (or WSL)**:
 
@@ -122,11 +120,11 @@ docker run -it --rm \
 
 ### Option B: Manual Installation
 
-Experienced users can install the software themselves. Windows users **should use [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)**.
+Experienced users can install the tools directly. Windows users **must use [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)**.
 
 1. **Install the neuroimaging suites**: [MRtrix3](https://www.mrtrix.org/download/), [FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FslInstallation), [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall), [ANTs](https://github.com/ANTsX/ANTs), [dcm2niix](https://github.com/rordenlab/dcm2niix).
 
-2. **Create the Python environment**:
+2. **Create the Python virtual environment**:
 ```bash
 python3 -m venv venv
 source venv/bin/activate
@@ -134,7 +132,7 @@ pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 ```
 
-3. **Configure environment variables** (add to `~/.bashrc`, adapting the paths):
+3. **Configure environment variables** (add to `~/.bashrc`, adjusting paths as needed):
 ```bash
 export FREESURFER_HOME=/opt/freesurfer
 . "$FREESURFER_HOME/SetUpFreeSurfer.sh"
@@ -143,13 +141,17 @@ export FSLDIR=/opt/fsl
 export ANTSPATH=/opt/ants/bin/
 export MRTRIX3_HOME=/opt/mrtrix3
 export PATH="$ANTSPATH:$MRTRIX3_HOME/bin:$PATH"
+export OMP_NUM_THREADS=4
+export OPENBLAS_NUM_THREADS=4
+export MRTRIX_NTHREADS=4
+export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=4
 ```
 
 ---
 
 ## Environment Verification
 
-Go to the repository folder (e.g., `cd ~/code/ist_summer_school_2027`, or `cd /mnt/c/Users/[YourUser]/code/ist_summer_school_2027` on WSL), then run:
+From the repository folder, run:
 
 **Docker:**
 ```bash
@@ -162,19 +164,19 @@ docker run --rm -v "${PWD}":/summer_school -w /summer_school \
 bash check_installation.sh
 ```
 
-A summary log is saved to `installation_check.log`.
+The script writes a summary to `installation_check.log`.
 
 ---
 
 ## Dataset Description
 
-The workshop dataset is packaged in `dicom_filtered_sub01.zip` (~65 MB) and contains anonymized research acquisitions. `tutorial_1.0_setup_data.sh` converts it to NIfTI.
+The workshop dataset is in `dicom_filtered_sub01.zip` (~65 MB). `tutorial_1.0_setup_data.sh` converts it to NIfTI and organizes it into `bids_data/`.
 
-1. **Multi-shell diffusion-weighted imaging (DWI)**
-   * Philips 3 T spin-echo EPI, AP phase-encoding axis (no reverse-PE b0), TR/TE = 4800/92 ms (from the DICOM headers).
-   * Matrix 112 × 112 × 66, 2 mm isotropic.
+1. **Multi-shell diffusion-weighted image (DWI)**
+   * Philips 3 T spin-echo EPI, AP phase-encoding axis (no reverse-PE b0), TR/TE = 4800/92 ms.
+   * Matrix 112 × 112 × 66, 2 mm isotropic voxels.
    * 107 volumes:
-     - b = 0 (7 volumes; 6 of them are stored as b = 0.001)
+     - b = 0 (7 volumes; 6 are stored as b = 0.001)
      - b = 300 (8 directions)
      - b = 1000 (32 directions)
      - b = 2000 (60 directions)
@@ -182,13 +184,13 @@ The workshop dataset is packaged in `dicom_filtered_sub01.zip` (~65 MB) and cont
 3. **Reference templates (`template/`)**
    * `mni_masked.nii.gz`: skull-stripped MNI152 1 mm template.
    * `cc.nii.gz`: corpus callosum binary mask in MNI space.
-   * `FreeSurferColorLUT.txt` and `MrtrixLUT.txt`: label lookup tables used by `labelconvert`.
+   * `FreeSurferColorLUT.txt` and `MrtrixLUT.txt`: label lookup tables used by `5ttgen` and `labelconvert`.
 
 ---
 
 ## Interactive Jupyter Notebooks
 
-Launch Jupyter Lab inside the container:
+Start JupyterLab inside the container:
 
 ```bash
 ./launch_jupyter.sh
@@ -196,15 +198,15 @@ Launch Jupyter Lab inside the container:
 
 Then open `http://localhost:8888` in your browser. The notebooks are in `notebooks/`:
 
-* **`Day3_Microstructure_NODDI_DKI.ipynb`**: visualize the NODDI and DKI maps against DTI (run tutorial 3.3 first).
-* **`Day4_Tractometry_Profiling.ipynb`**: along-tract FA, MD and NDI profiles (run tutorial 4.6 first).
-* **`Day5_Connectomics_Graph_Theory.ipynb`**: raw vs. SIFT2 connectomes, hubs, and graph metrics (run tutorial 5.4 Track B first).
+* **`Day3_Microstructure_NODDI_DKI.ipynb`**: build an AMICO scheme file and compare NODDI, DKI, and Free Water maps with DTI FA (run Tutorial 3.3 first).
+* **`Day4_Tractometry_Profiling.ipynb`**: plot along-tract FA, MD, and NDI profiles (run Tutorial 4.6 first).
+* **`Day5_Connectomics_Graph_Theory.ipynb`**: compare raw and SIFT2 connectomes and inspect NetworkX graph metrics (run Tutorial 5.4 Track B first).
 
 ---
 
 ## Workspace Cleanup
 
-`bash clean_repo.sh` deletes all generated files and keeps only the workshop sources.
+`bash clean_repo.sh` deletes all generated files and folders and keeps only the workshop source files.
 
 ---
 

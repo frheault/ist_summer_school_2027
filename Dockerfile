@@ -160,6 +160,10 @@ ENV FREESURFER_HOME=/opt/freesurfer \
     FSLDIR=/opt/fsl \
     ANTSPATH=/opt/ants/bin/ \
     MRTRIX3_HOME=/opt/mrtrix3 \
+    OMP_NUM_THREADS=4 \
+    OPENBLAS_NUM_THREADS=4 \
+    MRTRIX_NTHREADS=4 \
+    ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=4 \
     OS=Linux \
     FS_OVERRIDE=0 \
     FIX_VERTEX_AREA="" \
@@ -183,11 +187,15 @@ RUN echo "# --- IST Summer School 2027 Environment Setup ---" >> /etc/bash.bashr
     echo "export FSLDIR=/opt/fsl" >> /etc/bash.bashrc && \
     echo "export ANTSPATH=/opt/ants/bin/" >> /etc/bash.bashrc && \
     echo "export MRTRIX3_HOME=/opt/mrtrix3" >> /etc/bash.bashrc && \
+    echo "export OMP_NUM_THREADS=4" >> /etc/bash.bashrc && \
+    echo "export OPENBLAS_NUM_THREADS=4" >> /etc/bash.bashrc && \
+    echo "export MRTRIX_NTHREADS=4" >> /etc/bash.bashrc && \
+    echo "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=4" >> /etc/bash.bashrc && \
     echo "export PATH=\"/opt/venv/bin:/opt/ants/bin:/opt/mrtrix3/bin:/opt/fsl/bin:/opt/fsl/share/fsl/bin:/opt/freesurfer/bin:\$PATH\"" >> /etc/bash.bashrc && \
     echo "[ -f /opt/fsl/etc/fslconf/fsl.sh ] && . /opt/fsl/etc/fslconf/fsl.sh" >> /etc/bash.bashrc && \
     echo "alias setup_fs='source /opt/freesurfer/SetUpFreeSurfer.sh'" >> /etc/bash.bashrc && \
     echo "[ -f /opt/freesurfer/SetUpFreeSurfer.sh ] && . /opt/freesurfer/SetUpFreeSurfer.sh > /dev/null 2>&1 || true" >> /etc/bash.bashrc
 
-WORKDIR /data
+WORKDIR /summer_school
 
 CMD ["/bin/bash"]

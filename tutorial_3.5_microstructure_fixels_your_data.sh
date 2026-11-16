@@ -1,19 +1,20 @@
 #!/bin/bash
-# For pedagogical context, notes, and tips, refer to NOTEBOOK.md.
+# See NOTEBOOK.md for study notes and quality control tips.
 #
 # ======================================================================
-# dMRI Summer School - Tutorial 3.5 (Your Data)
+# dMRI Summer School - Tutorial 3.5 (Session 3.5 - Your Data)
 #
-# Theme: Microstructure Modeling & Fixels (Your Data)
+# Theme: Hands-on Microstructure and Fixels (Your Data)
 #
-# Goal: Assess multi-shell suitability of your personal dataset and fit
-#       microstructure models (NODDI via AMICO, DKI via DIPY, FBA via MRtrix3).
+# Goal: Check the shells of your dataset and fit microstructure models
+#       (NODDI, DKI, Free Water) and fixels, reusing your brain mask
+#       from Tutorial 2.5.
 #
 # Instructions:
-#   1. Set the YOUR_* variables below to point to your files.
-#      (Leave YOUR_MASK empty to compute one with bet.)
-#   2. Run this script: bash tutorial_3.5_microstructure_fixels_your_data.sh
-#   3. Inspect the resulting maps (NDI, ODI, MK) and fixels in mrview.
+#   1. Edit YOUR_DWI, YOUR_BVAL, and YOUR_BVEC below to point to your files.
+#      (YOUR_MASK defaults to your_data_b0_brain_mask.nii.gz from Tutorial 2.5.)
+#   2. Run: bash tutorial_3.5_microstructure_fixels_your_data.sh
+#   3. Inspect your microstructure maps and fixels in mrview.
 # ======================================================================
 
 set -e
@@ -22,61 +23,51 @@ set -e
 YOUR_DWI="YOUR_DWI.nii.gz"
 YOUR_BVAL="YOUR_DWI.bval"
 YOUR_BVEC="YOUR_DWI.bvec"
-YOUR_MASK=""
+YOUR_MASK="your_data_b0_brain_mask.nii.gz"   # created in Tutorial 2.5
 OUT_PREFIX="your_data"
 
 if [ ! -f "$YOUR_DWI" ]; then
-    echo "[INFO] Please edit this script and specify YOUR_DWI, YOUR_BVAL, YOUR_BVEC (and optionally YOUR_MASK)."
-    echo "       Example (workshop data), edit these lines at the top of the file:"
-    echo "       YOUR_DWI=\"bids_data/sub-01/ses-01/dwi/dwi.nii.gz\"  YOUR_BVAL=\"...dwi.bval\"  YOUR_BVEC=\"...dwi.bvec\""
+    echo "[INFO] Edit YOUR_DWI, YOUR_BVAL, and YOUR_BVEC at the top of this script."
+    echo "       Example (workshop data):"
+    echo "       YOUR_DWI=\"bids_data/sub-01/ses-01/dwi/dwi.nii.gz\""
+    echo "       YOUR_BVAL=\"bids_data/sub-01/ses-01/dwi/dwi.bval\""
+    echo "       YOUR_BVEC=\"bids_data/sub-01/ses-01/dwi/dwi.bvec\""
+    echo "       YOUR_MASK=\"b0_brain_mask.nii.gz\""
     exit 0
 fi
 
-export OMP_NUM_THREADS=4
-export MRTRIX_NTHREADS=4
+# Step 1: Inspect shells
+# Note: NODDI, DKI, and 3-tissue MSMT-CSD require at least 2 non-zero shells (b > 10).
+# For single-shell data, comment out Steps 2 and 3, and use the 2-tissue dwi2fod command in Step 5.
+echo "Step 1: Checking shells (b-values) and volume counts..."
+mrinfo "$YOUR_DWI" -fslgrad "$YOUR_BVEC" "$YOUR_BVAL" -shell_bvalues -shell_sizes
 
-# Step 0: Inspect shells (NODDI and DKI require >= 2 non-zero shells)
-# Single-shell data (e.g. b=0 + b=1000 only): NODDI and DKI are not meaningful.
-#   -> comment out Steps 1 and 2, and use the 2-tissue dwi2fod command given in Step 3.
-echo "Step 0: Checking shells..."
-echo "  b-values: $(mrinfo "$YOUR_DWI" -fslgrad "$YOUR_BVEC" "$YOUR_BVAL" -shell_bvalues)"
-echo "  volumes : $(mrinfo "$YOUR_DWI" -fslgrad "$YOUR_BVEC" "$YOUR_BVAL" -shell_sizes)"
-# Non-zero shells = b-values above MRtrix's b0 threshold (b > 10)
-N_SHELLS=$(mrinfo "$YOUR_DWI" -fslgrad "$YOUR_BVEC" "$YOUR_BVAL" -shell_bvalues | \
-    awk '{n=0; for (i=1; i<=NF; i++) if ($i > 10) n++; print n}')
-echo "  non-zero shells: ${N_SHELLS}"
-[ "$N_SHELLS" -lt 2 ] && echo "  [WARNING] Single-shell data: see the comments of Steps 1-3 before continuing."
-
-# Brain mask: compute with bet on the mean b0
-# Note: If you already have a brain mask, comment out this step and set YOUR_MASK="your_mask.nii.gz"
-echo "Computing a brain mask with bet..."
-dwiextract "$YOUR_DWI" - -fslgrad "$YOUR_BVEC" "$YOUR_BVAL" -bzero | \
-    mrmath - mean "${OUT_PREFIX}_b0_mean.nii.gz" -axis 3 -force
-bet "${OUT_PREFIX}_b0_mean.nii.gz" "${OUT_PREFIX}_b0_brain.nii.gz" -f 0.25 -m
-YOUR_MASK="${OUT_PREFIX}_b0_brain_mask.nii.gz"
-
-# Step 1: Fit NODDI via AMICO (single-shell data: comment out this step)
-echo "Step 1: Fitting NODDI multi-compartment model via AMICO..."
+# Step 2: Fit the NODDI model with AMICO (multi-shell only: comment out for single-shell data)
+echo "Step 2: Fitting the NODDI model with AMICO..."
 scil_NODDI_maps "$YOUR_DWI" "$YOUR_BVAL" "$YOUR_BVEC" \
     --mask "$YOUR_MASK" --out_dir "${OUT_PREFIX}_NODDI_results" --processes 4 -f
 
-# Step 2: Fit DKI via DIPY (single-shell data: comment out this step)
-echo "Step 2: Fitting Diffusion Kurtosis Imaging (DKI) via DIPY..."
+# Step 3: Fit the DKI model with DIPY (multi-shell only: comment out for single-shell data)
+echo "Step 3: Fitting the DKI model with DIPY..."
 scil_dki_metrics "$YOUR_DWI" "$YOUR_BVAL" "$YOUR_BVEC" \
     --mask "$YOUR_MASK" \
     --mk "${OUT_PREFIX}_dki_mk.nii.gz" \
     --ak "${OUT_PREFIX}_dki_ak.nii.gz" \
-    --rk "${OUT_PREFIX}_dki_rk.nii.gz" -f --not_all
+    --rk "${OUT_PREFIX}_dki_rk.nii.gz" --not_all -f
 
-# Step 3: Estimate fODFs & Fixels
-echo "Step 3: Estimating 3-tissue response and fODFs for fixels..."
+# Step 4: Fit the Free Water model with AMICO (works on single-shell and multi-shell data)
+echo "Step 4: Fitting the Free Water model with AMICO..."
+scil_freewater_maps "$YOUR_DWI" "$YOUR_BVAL" "$YOUR_BVEC" \
+    --mask "$YOUR_MASK" --out_dir "${OUT_PREFIX}_freewater_results" --processes 4 -f
+
+# Step 5: Estimate response functions, fODFs, and fixels
+echo "Step 5: Computing 3-tissue response functions, fODFs, and fixels..."
 dwi2response dhollander "$YOUR_DWI" \
     "${OUT_PREFIX}_wm.txt" "${OUT_PREFIX}_gm.txt" "${OUT_PREFIX}_csf.txt" \
     -fslgrad "$YOUR_BVEC" "$YOUR_BVAL" \
     -mask "$YOUR_MASK" -force
 
-# 3-tissue MSMT-CSD (WM + GM + CSF) needs >= 2 non-zero shells.
-# Single-shell data: replace the command below with the 2-tissue version (WM + CSF):
+# Single-shell data: replace the 3-tissue command below with the 2-tissue (WM + CSF) version:
 #   dwi2fod msmt_csd "$YOUR_DWI" "${OUT_PREFIX}_wm.txt" "${OUT_PREFIX}_wmfod.nii.gz" \
 #       "${OUT_PREFIX}_csf.txt" "${OUT_PREFIX}_csffod.nii.gz" \
 #       -fslgrad "$YOUR_BVEC" "$YOUR_BVAL" -mask "$YOUR_MASK" -force
@@ -91,4 +82,4 @@ fod2fixel "${OUT_PREFIX}_wmfod.nii.gz" "${OUT_PREFIX}_fixel_dir" \
     -afd fd.mif -peak_amp peak_amp.mif -mask "$YOUR_MASK" -force
 fixel2voxel "${OUT_PREFIX}_fixel_dir/fd.mif" count "${OUT_PREFIX}_nufo.nii.gz" -force
 
-echo "Tutorial 3.5 complete. Inspect microstructure maps and fixels in mrview."
+echo "Tutorial 3.5 complete. Inspect your microstructure maps and fixels in mrview."
